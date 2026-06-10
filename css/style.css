@@ -11,6 +11,8 @@
 	--primary: #f5722c;
 	--secondary: #e23610;
 	--accent: #733c3f;
+  --link: #ffda10;
+  --link-hover: #c3ff0f;
   --dim: #ffffff50;
 }
 
@@ -91,12 +93,12 @@ button:hover {
 }
 
 a {
-	color: var(--primary);
+	color: var(--link);
 	text-decoration: none;
 }
 
 a:hover {
-	color: var(--secondary);
+	color: var(--link-hover);
 }
 
 /* CLASSES */
