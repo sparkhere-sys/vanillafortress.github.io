@@ -4,41 +4,48 @@ title: Server List - VFTF
 ---
 
 <script type="application/javascript">
-window.addEventListener('message',function(e) {
+  window.addEventListener('message',function(e) {
   if(e.data.uid&&e.data.type==='sizeUpdate') {
     var i = document.querySelector('iframe[name="'+e.data.uid+'"]');
     i.style.width = e.data.payload.width;
     i.style.height = e.data.payload.height;
   }
-});
+  });
 </script>
 
 <div>
 
-<h1 class="mid-align">SERVERS</h1>
+  <h1 class="mid-align">SERVERS</h1>
 
-<p class="mid-align">This page will be updated from time to time.</p>
-<p class="mid-align">You can find Zesty Jesus's servers <a href="https://zestyjesus.com/servers">here!</a></p>
+  <p class="mid-align">This page will be updated from time to time.</p>
+  <p class="mid-align">You can find Zesty Jesus's servers
+    <a href="https://zestyjesus.com/servers">here!</a>
+  </p>
 
-{% for s in site.data.servers %}
-  <div class="server">
-    <h3>{{ s.name }}</h3>
+  {% for s in site.data.servers %}
+    <div class="server">
+      <h3>{{ s.name }}</h3>
 
-    <iframe
-      src="https://cdn.battlemetrics.com/b/horizontal500x80px/{{ s.id }}.html?foreground=%23{{ site.data.colors.foreground }}&background=%23{{ site.data.colors.background }}&lines=%23{{ site.data.colors.lines }}&linkColor=%23{{ site.data.colors.linkColor }}&chartColor=%23{{ site.data.colors.chartColor }}"
-      frameborder="0"
-      style="border:0"
-      name="{{ s.id }}">
-    </iframe>
+      <iframe
+        src="https://cdn.battlemetrics.com/b/horizontal500x80px/{{ s.id }}.html?foreground=%23{{ site.data.colors.foreground }}&background=%23{{ site.data.colors.background }}&lines=%23{{ site.data.colors.lines }}&linkColor=%23{{ site.data.colors.linkColor }}&chartColor=%23{{ site.data.colors.chartColor }}"
+        frameborder="0"
+        style="border:0"
+        name="{{ s.id }}"></iframe>
 
-    <div class="links">
-      <a href="{{ s.connect }}">Connect to Server</a>
-      {% if s.steam %}<a href="{{ s.steam }}">Steam Group</a>{% endif %}
-      {% if s.discord %}<a href="{{ s.discord }}">Discord Server</a>{% endif %}
-      {% if s.website %}<a href="{{ s.website }}">Website</a>{% endif %}
+      <div class="links">
+        <a href="{{ s.connect }}">Connect to Server</a>
+        {% if s.steam %}
+          <a href="{{ s.steam }}">Steam Group</a>
+        {% endif %}
+        {% if s.discord %}
+          <a href="{{ s.discord }}">Discord Server</a>
+        {% endif %}
+        {% if s.website %}
+          <a href="{{ s.website }}">Website</a>
+        {% endif %}
+      </div>
+
     </div>
-
-  </div>
-{% endfor %}
+  {% endfor %}
 
 </div>
