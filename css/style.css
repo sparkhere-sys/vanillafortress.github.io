@@ -6,11 +6,11 @@
 /* COLORS */
 
 :root {
-	--bg-color: #3f3f3d;
-	--text-color: #fdf9cd;
-	--primary: #f5722c;
-	--secondary: #e23610;
-	--accent: #f0e62e;
+  --bg-color: #3f3f3d;
+  --text-color: #fdf9cd;
+  --primary: #f5722c;
+  --secondary: #e23610;
+  --accent: #f0e62e;
   --dim: #ffffff50;
   --bg-color-light: #373736;
 }
@@ -18,46 +18,46 @@
 /* BASE STYLES */
 
 body {
-	background-color: var(--bg-color);
-	color: var(--text-color);
-	font-family: 'Inter', sans-serif;
-	font-size: 16px;
-	margin: 0;
-	padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
 }
 
 header, footer {
-	background-color: var(--bg-color-light);
-	/* text-align: center; */
-	font-size: 14px;
-	padding: 1em;
+  background-color: var(--bg-color-light);
+  /* text-align: center; */
+  font-size: 14px;
+  padding: 1em;
   font-weight: 700;
 }
 
 main {
-	padding: 2em;
+  padding: 2em;
 }
 
 h1, h2, h3 {
-	color: var(--primary);
-	font-family: "Ubuntu", sans-serif;
+  color: var(--primary);
+  font-family: "Ubuntu", sans-serif;
   font-weight: 700;
-	text-transform: uppercase;
+  text-transform: uppercase;
 }
 
 ul {
-	padding: 1em;
-	list-style-type: circle; /* circle bullets forever */
+  padding: 1em;
+  list-style-type: circle; /* circle bullets forever */
 }
 
 li {
-	margin-bottom: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 header {
   display: flex;
   justify-content: space-between;
-	padding: 1em 1.3em;
+  padding: 1em 1.3em;
 }
 
 nav {
@@ -72,25 +72,25 @@ nav a {
 /* INTERACTIVE ELEMENTS */
 
 button {
-	background-color: var(--secondary);
-	color: var(--text-color);
-	border: none;
-	padding: 0.5em 1em;
-	text-align: center;
+  background-color: var(--secondary);
+  color: var(--text-color);
+  border: none;
+  padding: 0.5em 1em;
+  text-align: center;
 }
 
 button:hover {
-	background-color: var(--primary);
-	cursor: pointer;
+  background-color: var(--primary);
+  cursor: pointer;
 }
 
 a {
-	color: var(--secondary);
-	text-decoration: none;
+  color: var(--secondary);
+  text-decoration: none;
 }
 
 a:hover {
-	color: var(--primary);
+  color: var(--primary);
 }
 
 /* CLASSES */
@@ -100,7 +100,7 @@ a:hover {
 }
 
 .mid-align {
-	text-align: center;
+  text-align: center;
 }
 
 .right-align {
@@ -113,42 +113,42 @@ a:hover {
 }
 
 .server {
-	background-color: var(--bg-color-light);
-	border: 1px solid var(--dim);
-	border-radius: 8px;
-	padding: 1em;
-	margin-bottom: 1.5em;
-	transition: transform 0.1s ease;
+  background-color: var(--bg-color-light);
+  border: 1px solid var(--dim);
+  border-radius: 8px;
+  padding: 1em;
+  margin-bottom: 1.5em;
+  transition: transform 0.1s ease;
 }
 
 .server h3 {
-	margin-top: 0;
+  margin-top: 0;
 }
 
 .server iframe {
-	width: 100%;
-	max-width: 500px;
-	display: block;
-	margin: 0.5em 0;
-	border-radius: 6px;
+  width: 100%;
+  max-width: 500px;
+  display: block;
+  margin: 0.5em 0;
+  border-radius: 6px;
 }
 
 .links a {
-	display: inline-block;
-	padding: 0.3em 0.6em;
-	background: var(--primary);
-	color: var(--text-color);
-	border-radius: 4px;
-	text-decoration: none;
-	transition: 0.15s ease;
-	border: 1px solid transparent;
+  display: inline-block;
+  padding: 0.3em 0.6em;
+  background: var(--primary);
+  color: var(--text-color);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: 0.15s ease;
+  border: 1px solid transparent;
 }
 
 .links a:hover {
   background: var(--secondary);
   color: var(--text-color);
-	transform: translateY(-1px);
-	border-color: var(--accent);
+  transform: translateY(-1px);
+  border-color: var(--accent);
 }
 
 .server:hover {
@@ -158,17 +158,17 @@ a:hover {
 /* FLEXBOX */
 
 html, body {
-	height: 100%;
-	margin: 0;
-	padding: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-	display: flex;
-	flex-direction: column;
-	min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
 }
 
 main {
-	flex: 1;
+  flex: 1;
 }
