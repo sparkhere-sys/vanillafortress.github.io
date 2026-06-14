@@ -31,66 +31,18 @@ script: /js/copy_ip.js
       <h2 class="mid-align">Europe</h2>
 
       {% for s in site.data.servers.eu %}
-        <div class="server">
-          <h3>{{ s.name }}</h3>
-
-          <iframe
-            src="https://cdn.battlemetrics.com/b/horizontal500x80px/{{ s.id }}.html?foreground=%23{{ site.data.colors.foreground }}&background=%23{{ site.data.colors.background }}&lines=%23{{ site.data.colors.lines }}&linkColor=%23{{ site.data.colors.linkColor }}&chartColor=%23{{ site.data.colors.chartColor }}"
-            frameborder="0"
-            style="border:0"
-            name="{{ s.id }}"></iframe>
-
-          <div class="links">
-            <a href="steam://connect/{{ s.ip }}">Connect to Server</a>
-            <a
-              href="#"
-              class="copy-ip"
-              data-copy="{{ s.ip }}">Copy IP</a>
-
-            {% if s.steam %}
-              <a href="{{ s.steam }}">Steam Group</a>
-            {% endif %}
-            {% if s.discord %}
-              <a href="{{ s.discord }}">Discord Server</a>
-            {% endif %}
-            {% if s.website %}
-              <a href="{{ s.website }}">Website</a>
-            {% endif %}
-
-          </div>
-
-        </div>
+        {% include server_card.html s=s connect="steam://connect/{{ s.ip }}" %}
       {% endfor %}
+
     </div>
 
     <div class="na-servers">
       <h2 class="mid-align">North America</h2>
 
       {% for s in site.data.servers.na %}
-        <div class="server">
-          <h3>{{ s.name }}</h3>
-
-          <iframe
-            src="https://cdn.battlemetrics.com/b/horizontal500x80px/{{ s.id }}.html?foreground=%23{{ site.data.colors.foreground }}&background=%23{{ site.data.colors.background }}&lines=%23{{ site.data.colors.lines }}&linkColor=%23{{ site.data.colors.linkColor }}&chartColor=%23{{ site.data.colors.chartColor }}"
-            frameborder="0"
-            style="border:0"
-            name="{{ s.id }}"></iframe>
-
-          <div class="links">
-            <a href="{{ s.connect }}">Connect to Server</a>
-            {% if s.steam %}
-              <a href="{{ s.steam }}">Steam Group</a>
-            {% endif %}
-            {% if s.discord %}
-              <a href="{{ s.discord }}">Discord Server</a>
-            {% endif %}
-            {% if s.website %}
-              <a href="{{ s.website }}">Website</a>
-            {% endif %}
-          </div>
-
-        </div>
+        {% include server_card.html s=s connect="steam://connect/{{ s.ip }}" %}
       {% endfor %}
+
     </div>
   </div>
 
