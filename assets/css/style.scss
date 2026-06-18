@@ -169,9 +169,14 @@ a {
 }
 
 .link-icons {
-  > a > img {
-    height: 50px;
-    width: 50px;
+  > a {
+    padding: 1.2em;
+
+    > img {
+      height: 50px;
+      width: 50px;
+    }
+    
   }
 }
 
