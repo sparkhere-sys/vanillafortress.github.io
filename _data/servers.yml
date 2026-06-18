@@ -10,6 +10,11 @@ eu:
     ip: 170.23.138.191:22208
     steam: https://steamcommunity.com/groups/plr_pipeline
     discord: https://discord.gg/YYU6qhkeV
+  
+  - name: Zesty's (EU1)
+    id: 39474491
+    ip: 185.107.96.14:27015
+    website: https://zestyjesus.com
 
 na:
   - name: Pipeline.tf (NA1)
@@ -20,15 +25,15 @@ na:
   
   - name: Agartha.tf
     region: na
-    id: 34960104
-    ip: 178.156.190.235:27015
+    id: 39427342
+    ip: agartha.gamergod.net:22133
     steam: https://steamcommunity.com/groups/agarthalives/
     website: https://agartha.tf
   
   - name: Teepawtz.tf
     region: na
     id: 37100662
-    ip: 170.23.69.133:22189
+    ip: teapot.ggwp.cc:22189
     steam: https://steamcommunity.com/groups/Teepawt
   
   - name: Fight Club Night
