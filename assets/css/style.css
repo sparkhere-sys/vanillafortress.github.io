@@ -136,7 +136,7 @@ a:hover {
   border-color: #f0e62e;
 }
 
-.link-icons > img {
+.link-icons > a > img {
   height: 50px;
   width: 50px;
 }
