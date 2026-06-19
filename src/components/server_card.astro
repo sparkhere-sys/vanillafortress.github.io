@@ -14,9 +14,9 @@ const { server, connect } = Astro.props;
     <a href={connect} class="btn-connect">Connect</a>
 
     <a
-      href="#"
+      href="/"
       class="copy-ip"
-      data-copy={server.ip}>
+      data-copy={server.ip}> <!-- before you yell at me about the href being /, have you heard of `e.preventDefault();`? -->
     Copy IP
     </a>
 
