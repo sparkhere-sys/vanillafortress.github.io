@@ -151,7 +151,8 @@ a {
 .links {
   font-weight: 400;
 
-  > a {
+  > a,
+  > button {
     display: inline-block;
     padding: 0.3em 0.6em;
     background: $primary;
@@ -160,6 +161,10 @@ a {
     text-decoration: none;
     transition: 0.15s ease;
     border: 1px solid transparent;
+
+    font-family: inherit;
+    font-size: inherit;
+    cursor: pointer;
 
     &:hover {
       background: $secondary;

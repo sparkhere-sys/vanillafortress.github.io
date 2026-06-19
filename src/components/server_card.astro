@@ -13,12 +13,12 @@ const { server, connect } = Astro.props;
 
     <a href={connect} class="btn-connect">Connect</a>
 
-    <a
-      href="/"
+    <button
+      type="button"
       class="copy-ip"
-      data-copy={server.ip}> <!-- before you yell at me about the href being /, have you heard of `e.preventDefault();`? -->
+      data-copy={server.ip}>
     Copy IP
-    </a>
+    </button>
 
     {server.discord && (
       <a href={server.discord}>Discord Server</a>
