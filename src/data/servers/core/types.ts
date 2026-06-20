@@ -13,9 +13,9 @@ export type ServerLinks = {
 
 export type ServerDefinition = {
   name: string;
-  id: number;
   region: RegionKey;
   ip: string;
+  countryOverride?: string;
 };
 
 export type CommunityDefinition = {
@@ -26,8 +26,17 @@ export type CommunityDefinition = {
 
 export type Server = ServerDefinition & ServerLinks & {
   community: string;
+  id: number;
+  country?: string;
 };
 
 export type ServerRegion = RegionDefinition & {
   servers: Server[];
 };
+
+export type BattleMetricsMetadata = {
+  id: number;
+  country?: string;
+};
+
+export type BattleMetricsCache = Record<string, BattleMetricsMetadata>;

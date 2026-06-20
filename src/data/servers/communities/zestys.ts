@@ -9,7 +9,6 @@ export default {
   servers: [
     {
       name: "Zesty's (EU)",
-      id: 39474491,
       region: "eu",
       ip: "185.107.96.14:27015",
     },

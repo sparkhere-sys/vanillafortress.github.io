@@ -8,7 +8,6 @@ export default {
   servers: [
     {
       name: "Fight Club Night",
-      id: 38674597,
       region: "na",
       ip: "204.12.240.189:27015",
     },

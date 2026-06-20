@@ -9,7 +9,6 @@ export default {
   servers: [
     {
       name: "BBQ Party",
-      id: 39230336,
       region: "eu",
       ip: "79.76.47.29:27015",
     },
