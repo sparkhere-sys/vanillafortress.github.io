@@ -1,21 +1,24 @@
 ---
-import ExternalLink from "./external_link.astro";
 import type { Server } from "../data/servers";
+import arrowUpIcon from "lucide-static/icons/arrow-up.svg?url";
+import connectIcon from "lucide-static/icons/arrow-right.svg?url";
+import copyIcon from "lucide-static/icons/copy.svg?url";
 
 type Props = {
   server: Server;
-  connect: string;
+  group: string;
   regionLabel: string;
 };
 
-const { server, connect, regionLabel } = Astro.props;
+const { server, group, regionLabel } = Astro.props;
+const connectUrl = `steam://connect/${server.ip}`;
 const country = server.country?.toLowerCase();
 const flagStyle = country
   ? `background-image: url("https://flagcdn.com/${country}.svg")`
   : undefined;
 const searchText = [
   server.name,
-  server.community,
+  group,
   server.ip,
   server.region,
   regionLabel,
@@ -31,18 +34,8 @@ const searchText = [
   data-search={searchText}
   data-status="loading"
 >
-  <header class="server-card-header">
-    <h3>{server.community}</h3>
-    <code class="server-address">{server.ip}</code>
-  </header>
-
   <div class="server-card-content" aria-live="polite">
-    <div class="server-status">
-      <span class="server-status-dot" aria-hidden="true"></span>
-      <span data-status-text>Checking</span>
-    </div>
-
-    <div class="server-identity">
+    <div class="server-primary-row">
       <span
         class="country-flag"
         data-country-flag
@@ -51,40 +44,67 @@ const searchText = [
         aria-label={country?.toUpperCase()}
         aria-hidden={country ? undefined : "true"}
       ></span>
-      <strong data-players>--/--</strong>
-      <span data-server-name>{server.name}</span>
+      <strong class="server-player-count" data-players>
+        <span class="server-player-current" data-player-current>--</span>
+        <span>/</span>
+        <span data-player-max>--</span>
+      </strong>
+      <span class="server-live-name" data-server-name>{server.name}</span>
     </div>
 
     <span class="server-map" data-map></span>
 
-    <div class="server-details">
-      <span><strong data-rank>--</strong> rank</span>
-      <span><strong data-player-summary>--/--</strong> players</span>
-    </div>
+    <div class="server-lower">
+      <div class="server-data">
+        <div class="history-panel" data-history-panel>
+          <div class="history-axis" aria-hidden="true">
+            <span data-history-upper>--</span>
+            <span data-history-lower>--</span>
+          </div>
+          <canvas
+            class="history-graph"
+            data-history-graph
+            width="480"
+            height="104"
+            aria-label="Player count over the past 24 hours"
+          ></canvas>
+        </div>
 
-    <div class="server-history" data-history-panel>
-      <span>Players 24h</span>
-      <canvas
-        data-history-graph
-        width="360"
-        height="92"
-        aria-label="Player count over the past 24 hours"
-      ></canvas>
-    </div>
+        <div class="server-meta-row">
+          <span class="history-label">
+            Players (24h)
+            <span
+              class="history-arrow"
+              style={`--icon: url("${arrowUpIcon}")`}
+              aria-hidden="true"
+            ></span>
+          </span>
+          <span class="server-connection-meta">
+            <code class="server-address">{server.ip}</code>
+            <span class="server-meta-separator" aria-hidden="true">&bull;</span>
+            <span class="status-head">
+              <span class="status-dot" aria-hidden="true"></span>
+              <span data-status-text>Checking</span>
+            </span>
+          </span>
+        </div>
+      </div>
 
-    <div class="links server-card-actions">
-      <a href={connect} class="btn-connect">Connect</a>
-      <button type="button" class="copy-ip" data-copy={server.ip}>
-        <span data-copy-label>Copy IP</span>
-      </button>
+      <div class="server-actions">
+        <a class="server-connect" href={connectUrl}>
+          <span class="server-action-icon" style={`--icon: url("${connectIcon}")`} aria-hidden="true"></span>
+          Connect
+        </a>
+        <button
+          class="copy-ip"
+          type="button"
+          data-copy={server.ip}
+          aria-label={`Copy connect command for ${server.name}`}
+        >
+          <span class="server-action-icon" style={`--icon: url("${copyIcon}")`} aria-hidden="true"></span>
+          <span data-copy-label>Copy IP</span>
+        </button>
+      </div>
     </div>
-
-    {(server.discord || server.steam || server.website) && (
-      <nav class="server-community-links" aria-label={`${server.community} links`}>
-        {server.discord && <ExternalLink href={server.discord}>Discord</ExternalLink>}
-        {server.steam && <ExternalLink href={server.steam}>Steam Group</ExternalLink>}
-        {server.website && <ExternalLink href={server.website}>Website</ExternalLink>}
-      </nav>
-    )}
   </div>
 </article>
