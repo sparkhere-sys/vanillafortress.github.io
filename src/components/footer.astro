@@ -1,5 +1,26 @@
 ---
+import ExternalLink from "./external_link.astro";
 import socials from "../data/socials.yaml";
+
+const socialLinks = [
+  {
+    href: socials.discord,
+    label: "Discord",
+    icon: "/images/icons/discord.svg",
+  },
+  {
+    href: socials.steam,
+    label: "Steam",
+    icon: "/images/icons/steam.svg",
+  },
+  {
+    href: socials.repo,
+    label: "GitHub",
+    icon: "/images/icons/github.svg",
+  },
+];
+
+const currentYear = new Date().getFullYear();
 ---
 
 <footer>
@@ -7,34 +28,32 @@ import socials from "../data/socials.yaml";
   <div class="mid-align">
 
     <p class="attribution">
-      Website made by 
-      <a href={socials.spark}>_Spark,</a>
-      <a href={socials.rocks}>Rocks,</a>
-      and 
-      <a href={socials.tored}>Tored</a>
-      with help from people in the VFTF Discord.
+      Created by <ExternalLink href={socials.spark}>_Spark</ExternalLink>,
+      <ExternalLink href={socials.rocks}>Rocks</ExternalLink>, and
+      <ExternalLink href={socials.tored}>Tored</ExternalLink>
+      with support from the VFTF Discord community.
     </p>
 
-    <div class="link-icons">
+    <nav class="link-icons" aria-label="Community links">
+      {socialLinks.map((link) => (
+        <ExternalLink
+          href={link.href}
+          aria-label={`${link.label} (opens in a new tab)`}
+          data-tooltip={link.label}
+        >
+          <span
+            class="link-icon"
+            style={`--icon: url("${link.icon}")`}
+            aria-hidden="true"
+          ></span>
+        </ExternalLink>
+      ))}
+    </nav>
 
-      <a href={socials.discord}>
-        <img src="/images/icons/discord.svg" alt="Discord Server">
-      </a>
-
-      <a href={socials.steam}>
-        <img src="/images/icons/steam.svg" alt="Steam Group">
-      </a>
-
-      <a href={socials.repo}>
-        <img src="/images/icons/github.svg" alt="GitHub Repo">
-      </a>
-
-    </div>
-
-    <div class="legal-notice">
-      <p>Vanilla Fortress is not in any way affiliated with Valve Corporation. or the TF Team.</p>
-      <p>Team Fortress 2 and all related content are property of Valve Corporation.</p>
-    </div>
+    <p class="legal-notice">
+      &copy; {currentYear} Vanilla Fortress. Not affiliated with Valve or the TF Team.
+      Team Fortress 2 and related content are property of Valve Corporation.
+    </p>
 
   </div>
 
