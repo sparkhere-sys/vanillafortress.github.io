@@ -5,19 +5,30 @@ import type { Server } from "../data/servers";
 type Props = {
   server: Server;
   connect: string;
+  regionLabel: string;
 };
 
-const { server, connect } = Astro.props;
+const { server, connect, regionLabel } = Astro.props;
 const country = server.country?.toLowerCase();
 const flagStyle = country
   ? `background-image: url("https://flagcdn.com/${country}.svg")`
   : undefined;
+const searchText = [
+  server.name,
+  server.community,
+  server.ip,
+  server.region,
+  regionLabel,
+  country,
+].filter(Boolean).join(" ").toLowerCase();
 ---
 
 <article
   class="server-card"
   data-server-id={server.id}
   data-country-override={server.countryOverride}
+  data-region={server.region}
+  data-search={searchText}
   data-status="loading"
 >
   <header class="server-card-header">

@@ -149,6 +149,125 @@
   align-items: start;
 }
 
+.server-directory-controls {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1em;
+  margin: 2em 0;
+}
+
+.server-search,
+.server-search-field,
+.region-filter,
+.server-region-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.server-search {
+  align-items: stretch;
+  flex-direction: column;
+
+  > label {
+    color: colors.$dim;
+  }
+}
+
+.server-search-field {
+  position: relative;
+
+  > input,
+  > button {
+    min-height: 2.5em;
+    font: inherit;
+  }
+
+  > input {
+    padding-right: 2.5em;
+  }
+}
+
+.server-search-clear {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2.5em;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: colors.$dim;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+
+  > span {
+    width: 1.1em;
+    height: 1.1em;
+    background: currentColor;
+    -webkit-mask: var(--icon) center / contain no-repeat;
+    mask: var(--icon) center / contain no-repeat;
+  }
+}
+
+.region-filter {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+
+  > button {
+    min-height: 2.5em;
+    padding: 0.45em 0.75em;
+    color: colors.$text-color;
+    background: colors.$secondary-bg;
+    border: 1px solid colors.$dim;
+    border-radius: 4px;
+    font: inherit;
+    cursor: pointer;
+  }
+
+  > button[aria-pressed="true"] {
+    background: colors.$primary;
+  }
+}
+
+.server-region-header {
+  justify-content: space-between;
+
+  > span {
+    color: colors.$dim;
+  }
+}
+
+.server-card[hidden],
+.server-region[hidden],
+.server-empty[hidden],
+.server-search-clear[hidden] {
+  display: none;
+}
+
+.server-empty {
+  padding: 2em;
+  color: colors.$dim;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .server-directory-controls {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .region-filter {
+    justify-content: flex-start;
+  }
+
+  .server-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .links {
   font-weight: 400;
 

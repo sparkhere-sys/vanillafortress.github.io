@@ -1,10 +1,13 @@
 ---
 import Layout from "../layouts/default.astro";
 import ServerCard from "../components/server_card.astro";
-import { getServersByRegion } from "../data/servers";
+import { serverRegions } from "../data/servers";
+import clearIcon from "lucide-static/icons/x.svg?url";
 
-const euServers = getServersByRegion("eu");
-const naServers = getServersByRegion("na");
+const serverCount = serverRegions.reduce(
+  (total, region) => total + region.servers.length,
+  0,
+);
 
 ---
 
@@ -19,36 +22,59 @@ const naServers = getServersByRegion("na");
 
 </div>
 
+<section class="server-directory-controls" aria-label="Server filters">
+  <div class="server-search">
+    <label for="server-search">Search servers</label>
+    <span class="server-search-field">
+      <input
+        id="server-search"
+        type="search"
+        placeholder="Name, IP, or region"
+        autocomplete="off"
+      />
+      <button
+        class="server-search-clear"
+        type="button"
+        aria-label="Clear server search"
+        hidden
+      >
+        <span style={`--icon: url("${clearIcon}")`} aria-hidden="true"></span>
+      </button>
+    </span>
+  </div>
+
+  <div class="region-filter" role="group" aria-label="Region filter">
+    <button type="button" data-region-filter="all" aria-pressed="true">
+      All <span>{serverCount}</span>
+    </button>
+    {serverRegions.map((region) => (
+      <button type="button" data-region-filter={region.key} aria-pressed="false">
+        {region.label} <span>{region.servers.length}</span>
+      </button>
+    ))}
+  </div>
+</section>
+
 <div class="server-grid">
+  {serverRegions.map((region) => (
+    <section class="server-region" data-region-section={region.key}>
+      <header class="server-region-header">
+        <h2>{region.label}</h2>
+        <span>{region.servers.length} {region.servers.length === 1 ? "server" : "servers"}</span>
+      </header>
 
-  <div class="eu-servers">
-
-    <h2 class="mid-align">Europe</h2>
-
-    {euServers.map((server) => (
-
-      <ServerCard
-        server={server}
-        connect={`steam://connect/${server.ip}`}/>
-        
-    ))}
-
-  </div>
-
-  <div class="na-servers">
-    <h2 class="mid-align">North America</h2>
-
-    {naServers.map((server) => (
-
-      <ServerCard
-        server={server}
-        connect={`steam://connect/${server.ip}`}/>
-        
-    ))}
-
-  </div>
-
+      {region.servers.map((server) => (
+        <ServerCard
+          server={server}
+          regionLabel={region.label}
+          connect={`steam://connect/${server.ip}`}
+        />
+      ))}
+    </section>
+  ))}
 </div>
+
+<p class="server-empty" hidden>No servers match that search.</p>
 
 <script>
   type BattleMetricsAttributes = {
@@ -169,6 +195,13 @@ const naServers = getServersByRegion("na");
     setText(card, "[data-server-name]", attributes.name ?? "Unknown server");
     setText(card, "[data-map]", attributes.details?.map ?? "Unknown map");
 
+    card.dataset.search = [
+      card.dataset.search,
+      attributes.name,
+      attributes.details?.map,
+      attributes.country,
+    ].filter(Boolean).join(" ").toLowerCase();
+
     const country = (card.dataset.countryOverride ?? attributes.country)?.toLowerCase();
     const flag = card.querySelector("[data-country-flag]");
     if (country && /^[a-z]{2}$/.test(country) && flag instanceof HTMLElement) {
@@ -188,7 +221,7 @@ const naServers = getServersByRegion("na");
     setText(card, "[data-map]", "");
   };
 
-  const readCache = <Value>(key: string, lifetime: number): Value | null => {
+  const readCache = <Value,>(key: string, lifetime: number): Value | null => {
     const cached = sessionStorage.getItem(key);
     if (!cached) return null;
 
@@ -282,9 +315,62 @@ const naServers = getServersByRegion("na");
     });
   });
 
-  const cards = document.querySelectorAll(".server-card");
+  const cards = Array.from(document.querySelectorAll<HTMLElement>(".server-card"));
+  const regionSections = Array.from(
+    document.querySelectorAll<HTMLElement>("[data-region-section]"),
+  );
+  const filterButtons = Array.from(
+    document.querySelectorAll<HTMLButtonElement>("[data-region-filter]"),
+  );
+  const searchInput = document.querySelector("#server-search");
+  const searchClear = document.querySelector(".server-search-clear");
+  const emptyState = document.querySelector(".server-empty");
+  let activeRegion = "all";
+
+  const applyServerFilters = () => {
+    const query = searchInput instanceof HTMLInputElement
+      ? searchInput.value.trim().toLowerCase()
+      : "";
+    let visibleCount = 0;
+
+    cards.forEach((card) => {
+      const regionMatches = activeRegion === "all" || card.dataset.region === activeRegion;
+      const searchMatches = !query || (card.dataset.search ?? "").includes(query);
+      card.hidden = !(regionMatches && searchMatches);
+      if (!card.hidden) visibleCount += 1;
+    });
+
+    regionSections.forEach((section) => {
+      section.hidden = !section.querySelector(".server-card:not([hidden])");
+    });
+
+    if (searchClear instanceof HTMLButtonElement) searchClear.hidden = !query;
+    if (emptyState instanceof HTMLElement) emptyState.hidden = visibleCount > 0;
+  };
+
+  if (searchInput instanceof HTMLInputElement) {
+    searchInput.addEventListener("input", applyServerFilters);
+  }
+
+  if (searchInput instanceof HTMLInputElement && searchClear instanceof HTMLButtonElement) {
+    searchClear.addEventListener("click", () => {
+      searchInput.value = "";
+      searchInput.focus();
+      applyServerFilters();
+    });
+  }
+
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      activeRegion = button.dataset.regionFilter ?? "all";
+      filterButtons.forEach((candidate) => {
+        candidate.setAttribute("aria-pressed", String(candidate === button));
+      });
+      applyServerFilters();
+    });
+  });
+
   cards.forEach((element) => {
-    if (!(element instanceof HTMLElement)) return;
     void loadServerStatus(element);
     void loadServerHistory(element);
   });
