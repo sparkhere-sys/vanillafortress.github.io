@@ -1,0 +1,44 @@
+@use './colors';
+
+// Page introduction
+
+.page-intro {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  margin: 0 auto 2.625rem;
+  text-align: center;
+
+}
+
+// Frequently asked questions
+
+.faq-list {
+  max-width: 50rem;
+  margin: 0 auto;
+  display: grid;
+  gap: 1rem;
+
+  > h2 {
+    margin-bottom: 0.25rem;
+  }
+}
+
+.question {
+  padding: 1.125rem;
+  background: colors.$secondary-bg;
+  border: 1px solid rgba(colors.$text-color, 0.18);
+  border-radius: 7px;
+
+  > h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.35rem;
+    line-height: 1;
+  }
+
+  > p {
+    margin: 0;
+    color: rgba(colors.$text-color, 0.74);
+    line-height: 1.6;
+  }
+}

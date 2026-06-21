@@ -1,41 +1,48 @@
 ---
 import Layout from "../layouts/default.astro";
+import ExternalLink from "../components/external_link.astro";
 import faq from "../data/faq.yaml";
+import socials from "../data/socials.yaml";
 
-type FAQ = { // wallahi typescript be stricter than rust
+type Social = keyof typeof socials;
+
+type FAQ = {
   question: string;
   answer: string;
-}
+  link?: {
+    label: string;
+    social: Social;
+  };
+};
 
 const questions: FAQ[] = faq;
-
 ---
 
 <Layout
   title="About - VFTF"
   description="About Vanilla Fortress">
 
-<div class="mid-align">
-  <h1>About</h1>
+  <section class="page-intro">
+    <h1>About</h1>
+    <p class="page-lead">
+      Vanilla Fortress is a community hub for finding and seeding vanilla TF2 servers
+      running the original Quickplay era ruleset.
+    </p>
+  </section>
 
-  <p>
-    Vanilla Fortress is a community hub for finding and seeding vanilla TF2 servers
-    running the original Quickplay era ruleset.
-  </p>
-
-</div>
-
-<h1>FAQ</h1>
-
-{questions.map((q) => ( // this some ts soup over here
-
-  <div class="question">
-
-    <h2>{q.question}</h2>
-    <p>{q.answer}</p>
-
-  </div>
-
-))}
+  <section class="faq-list" aria-labelledby="faq-title">
+    <h2 id="faq-title">FAQ</h2>
+    {questions.map((item) => (
+      <article class="question">
+        <h3>{item.question}</h3>
+        <p>
+          {item.answer}
+          {item.link && (
+            <> <ExternalLink href={socials[item.link.social]}>{item.link.label}</ExternalLink>.</>
+          )}
+        </p>
+      </article>
+    ))}
+  </section>
 
 </Layout>
