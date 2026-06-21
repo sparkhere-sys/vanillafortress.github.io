@@ -246,7 +246,11 @@ const serverCount = serverRegions.reduce(
     updateHistoryAxis(card, lower, upper);
     drawHistoryGrid(context, width, height, maximum, lower, upper);
 
-    context.strokeStyle = "#d9bc55";
+    const graphColor = getComputedStyle(canvas)
+      .getPropertyValue("--history-graph-color")
+      .trim();
+
+    context.strokeStyle = graphColor || "#f0e62e";
     context.lineWidth = 2.5;
     context.lineCap = "round";
     context.lineJoin = "round";

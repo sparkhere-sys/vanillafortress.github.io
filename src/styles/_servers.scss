@@ -12,13 +12,17 @@ $quiet-text: #5b584c;
 $line: #585248;
 $online: #4f994d;
 $offline: #b94126;
-$graph: #d9bc55;
+$graph: colors.$accent;
 
 .server-directory,
 .server-directory *,
 .server-directory-controls,
 .server-directory-controls * {
   box-sizing: border-box;
+}
+
+.server-directory {
+  --history-graph-color: #{$graph};
 }
 
 // Directory controls
