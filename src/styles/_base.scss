@@ -39,6 +39,20 @@ h3 {
   text-transform: uppercase;
 }
 
+h1,
+h2 {
+  margin: 0;
+  line-height: 0.95;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 5vw, 4.25rem);
+}
+
+h2 {
+  font-size: clamp(2rem, 3.3vw, 2.55rem);
+}
+
 a {
   color: colors.$primary;
   text-decoration: none;

@@ -1,0 +1,65 @@
+@use './colors';
+
+// Home splash
+
+.home-splash {
+  min-height: 18.75rem;
+  display: grid;
+  justify-items: center;
+  gap: 0.875rem;
+  padding: clamp(1.125rem, 4vh, 2.375rem) 0 0;
+  text-align: center;
+}
+
+.home-intro {
+  display: grid;
+  justify-items: center;
+  gap: 0.375rem;
+
+  > p {
+    max-width: 45rem;
+    margin: 0;
+    color: colors.$text-color;
+    font-size: clamp(1rem, 1.5vw, 1.16rem);
+    line-height: 1.28;
+  }
+
+  > .eyebrow {
+    text-transform: uppercase;
+  }
+}
+
+.home-soldier {
+  width: min(14.375rem, 46vw);
+  height: auto;
+  margin-top: 0.75rem;
+  filter: drop-shadow(0 0.875rem 0.75rem rgba(0, 0, 0, 0.28));
+}
+
+// Community call to action
+
+.rally-section {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding-top: 0.875rem;
+  text-align: center;
+
+  > .links {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 520px) {
+  .home-splash {
+    padding-top: 1.125rem;
+  }
+
+  .home-soldier {
+    width: min(13.125rem, 62vw);
+  }
+
+  .rally-section .links > a {
+    flex: 0 1 auto;
+  }
+}
