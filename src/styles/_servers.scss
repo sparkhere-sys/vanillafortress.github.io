@@ -1,18 +1,6 @@
+@use 'sass:color';
 @use './colors';
 @use './fonts';
-
-$lane-bg: #201f1e;
-$group-header-bg: #302d28;
-$card-bg: #393733;
-$card-hover: #403e39;
-$graph-bg: #2f2e29;
-$primary-text: #c7bba2;
-$secondary-text: #918870;
-$quiet-text: #5b584c;
-$line: #585248;
-$online: #4f994d;
-$offline: #b94126;
-$graph: colors.$accent;
 
 .server-directory,
 .server-directory *,
@@ -22,7 +10,7 @@ $graph: colors.$accent;
 }
 
 .server-directory {
-  --history-graph-color: #{$graph};
+  --history-graph-color: #{colors.$accent};
 }
 
 // Directory controls
@@ -47,7 +35,7 @@ $graph: colors.$accent;
   min-width: min(100%, 20rem);
   display: grid;
   gap: 0.45rem;
-  color: $secondary-text;
+  color: colors.$text-muted;
   font-size: 0.76rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -66,7 +54,7 @@ $graph: colors.$accent;
     min-height: 2.6rem;
     padding: 0 2.6rem 0 0.8rem;
     color: colors.$text-color;
-    background: rgba(20, 19, 18, 0.74);
+    background: rgba(colors.$surface-deep, 0.74);
     border: 1px solid rgba(colors.$text-color, 0.18);
     border-radius: 4px;
     outline: none;
@@ -132,10 +120,10 @@ $graph: colors.$accent;
     gap: 0.5rem;
     padding: 0.45rem 0.7rem;
     color: rgba(colors.$text-color, 0.82);
-    background: #44413d;
+    background: colors.$bg-color;
     border: 1px solid rgba(colors.$text-color, 0.14);
     border-radius: 4px;
-    box-shadow: 0 3px 0 #292725;
+    box-shadow: 0 3px 0 colors.$surface-deep;
     font: 700 0.82rem/1 fonts.$inter;
     cursor: pointer;
     transition:
@@ -147,22 +135,22 @@ $graph: colors.$accent;
     &:hover,
     &:focus-visible {
       color: colors.$text-color;
-      background: #514d48;
+      background: color.adjust(colors.$bg-color, $lightness: 6%);
       border-color: rgba(colors.$text-color, 0.28);
     }
 
     &[aria-pressed="true"] {
-      color: #231f1b;
+      color: colors.$surface-deep;
       background: colors.$primary;
       border-color: rgba(colors.$text-color, 0.2);
-      box-shadow: 0 3px 0 #9b3f20;
+      box-shadow: 0 3px 0 color.adjust(colors.$primary, $lightness: -25%);
     }
 
     > span {
       min-width: 1.5rem;
       padding: 0.15rem 0.4rem;
       color: inherit;
-      background: rgba(0, 0, 0, 0.18);
+      background: rgba(colors.$surface-deep, 0.3);
       border-radius: 999px;
       font-size: 0.72rem;
       text-align: center;
@@ -183,7 +171,7 @@ $graph: colors.$accent;
   min-width: 0;
   position: relative;
   overflow: visible;
-  background: $lane-bg;
+  background: colors.$surface-deep;
   border-radius: 4px;
 }
 
@@ -197,7 +185,7 @@ $graph: colors.$accent;
 
   > h2 {
     margin: 0;
-    color: $primary-text;
+    color: colors.$text-soft;
     font-family: fonts.$tf2-build;
     font-size: 2rem;
     font-weight: 400;
@@ -211,7 +199,7 @@ $graph: colors.$accent;
   margin-top: 0.35rem;
 
   > span {
-    color: $secondary-text;
+    color: colors.$text-muted;
     font: 400 1rem/1 fonts.$tf2-secondary;
     text-transform: lowercase;
   }
@@ -227,8 +215,8 @@ $graph: colors.$accent;
   position: relative;
   z-index: 0;
   overflow: visible;
-  background: $group-header-bg;
-  border: 1px solid $line;
+  background: colors.$surface-header;
+  border: 1px solid colors.$border-muted;
   border-radius: 5px;
 }
 
@@ -246,15 +234,15 @@ $graph: colors.$accent;
   justify-content: space-between;
   gap: 0.85rem;
   padding: 0.5rem 0.75rem;
-  background: $group-header-bg;
-  border-bottom: 1px solid rgba($secondary-text, 0.35);
+  background: colors.$surface-header;
+  border-bottom: 1px solid rgba(colors.$text-muted, 0.35);
   border-radius: 4px 4px 0 0;
 
   > h3 {
     min-width: 0;
     margin: 0;
     overflow: hidden;
-    color: $primary-text;
+    color: colors.$text-soft;
     font: 400 1.15rem/1 fonts.$tf2-secondary;
     text-overflow: ellipsis;
     text-transform: none;
@@ -278,16 +266,16 @@ $graph: colors.$accent;
     align-items: center;
     justify-content: center;
     padding: 0;
-    color: $secondary-text;
+    color: colors.$text-muted;
     background: transparent;
     border: 1px solid transparent;
     border-radius: 50%;
 
     &:hover,
     &:focus-visible {
-      color: $primary-text;
-      background: rgba($primary-text, 0.07);
-      border-color: rgba($primary-text, 0.14);
+      color: colors.$text-soft;
+      background: rgba(colors.$text-soft, 0.07);
+      border-color: rgba(colors.$text-soft, 0.14);
     }
 
     &::before,
@@ -305,10 +293,10 @@ $graph: colors.$accent;
       padding: 0.42rem 0.55rem;
       content: attr(data-tooltip);
       color: colors.$text-color;
-      background: #302f2c;
+      background: colors.$surface-header;
       border: 1px solid rgba(colors.$text-color, 0.18);
       border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.24);
+      box-shadow: 0 4px 12px rgba(colors.$surface-deep, 0.48);
       font: 900 0.78rem/1 fonts.$nunito;
       transform: translate(-50%, 0.25rem);
       white-space: nowrap;
@@ -319,7 +307,7 @@ $graph: colors.$accent;
       width: 0.5rem;
       height: 0.5rem;
       content: "";
-      background: #302f2c;
+      background: colors.$surface-header;
       border-right: 1px solid rgba(colors.$text-color, 0.18);
       border-bottom: 1px solid rgba(colors.$text-color, 0.18);
       transform: translate(-50%, 0.25rem) rotate(45deg);
@@ -356,7 +344,7 @@ $graph: colors.$accent;
   overflow: hidden;
   display: grid;
   gap: 1px;
-  background: $line;
+  background: colors.$border-muted;
   border-radius: 0 0 4px 4px;
 }
 
@@ -364,12 +352,12 @@ $graph: colors.$accent;
 
 .server-card {
   min-width: 0;
-  background: $card-bg;
+  background: colors.$surface-card;
   transition: opacity 140ms ease, background-color 140ms ease;
 
   &:hover,
   &:focus-within {
-    background: $card-hover;
+    background: colors.$surface-card-hover;
     opacity: 1;
   }
 
@@ -393,7 +381,7 @@ $graph: colors.$accent;
   grid-template-columns: 1.5rem auto minmax(0, 1fr);
   align-items: center;
   gap: 0.45rem;
-  color: $primary-text;
+  color: colors.$text-soft;
   font: 700 1rem/1.15 fonts.$ubuntu;
 }
 
@@ -419,7 +407,7 @@ $graph: colors.$accent;
 }
 
 .server-card[data-current-players="0"] .server-player-current {
-  color: $secondary-text;
+  color: colors.$text-muted;
 }
 
 .server-live-name {
@@ -435,7 +423,7 @@ $graph: colors.$accent;
   min-height: 1em;
   padding-left: 1.95rem;
   overflow: hidden;
-  color: $secondary-text;
+  color: colors.$text-muted;
   font: 400 0.9rem/1.05 fonts.$tf2-secondary;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -465,7 +453,7 @@ $graph: colors.$accent;
 
 .history-axis {
   position: relative;
-  color: $quiet-text;
+  color: colors.$text-quiet;
   font: 400 0.9rem/1 fonts.$tf2-secondary;
 
   > span {
@@ -488,13 +476,13 @@ $graph: colors.$accent;
   width: 100%;
   height: 5.4rem;
   display: block;
-  background: $graph-bg;
+  background: colors.$surface-inset;
   border: 0;
   border-radius: 3px;
 }
 
 .history-panel[data-history-status="unavailable"] .history-graph {
-  background: rgba(20, 19, 18, 0.16);
+  background: rgba(colors.$surface-deep, 0.16);
 }
 
 .server-meta-row {
@@ -503,7 +491,7 @@ $graph: colors.$accent;
   align-items: center;
   justify-content: space-between;
   gap: 0.6rem;
-  color: $quiet-text;
+  color: colors.$text-quiet;
   font: 400 0.9rem/1 fonts.$tf2-secondary;
 }
 
@@ -520,7 +508,7 @@ $graph: colors.$accent;
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
-  color: $secondary-text;
+  color: colors.$text-muted;
   font-weight: 400;
   text-transform: uppercase;
 }
@@ -534,17 +522,17 @@ $graph: colors.$accent;
 }
 
 .server-card[data-status="online"] .status-head {
-  color: $online;
+  color: colors.$status-online;
 }
 
 .server-card[data-status="offline"] .status-head {
-  color: $offline;
+  color: colors.$status-offline;
 }
 
 .server-address {
   min-width: 0;
   overflow: hidden;
-  color: $secondary-text;
+  color: colors.$text-muted;
   font: 400 0.9rem/1 fonts.$tf2-secondary;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -553,14 +541,14 @@ $graph: colors.$accent;
 
 .server-meta-separator {
   flex: 0 0 auto;
-  color: $secondary-text;
+  color: colors.$text-muted;
 }
 
 .history-label {
   display: inline-flex;
   align-items: center;
   gap: 0.2rem;
-  color: $quiet-text;
+  color: colors.$text-quiet;
   white-space: nowrap;
 }
 
@@ -612,36 +600,36 @@ $graph: colors.$accent;
 }
 
 .server-actions > .server-connect {
-  color: $primary-text;
-  background: #56534e;
-  border-color: rgba($primary-text, 0.14);
+  color: colors.$text-soft;
+  background: colors.$border-muted;
+  border-color: rgba(colors.$text-soft, 0.14);
 }
 
 .server-card:hover .server-actions > .server-connect,
 .server-card:focus-within .server-actions > .server-connect {
   color: colors.$text-color;
-  background: #d9652f;
-  border-color: #9b3f20;
+  background: colors.$primary;
+  border-color: color.adjust(colors.$primary, $lightness: -25%);
 }
 
 .server-actions > .server-connect:hover,
 .server-actions > .server-connect:focus-visible {
   color: colors.$text-color;
-  background: #e5753d;
-  border-color: #b84c27;
+  background: color.adjust(colors.$primary, $lightness: 6%);
+  border-color: color.adjust(colors.$primary, $lightness: -20%);
 }
 
 .server-actions .copy-ip {
-  color: $primary-text;
+  color: colors.$text-soft;
   background: transparent;
-  border-color: #56534e;
+  border-color: colors.$border-muted;
   box-shadow: none;
 
   &:hover,
   &:focus-visible {
     color: colors.$text-color;
-    background: rgba($primary-text, 0.07);
-    border-color: rgba($primary-text, 0.24);
+    background: rgba(colors.$text-soft, 0.07);
+    border-color: rgba(colors.$text-soft, 0.24);
   }
 }
 
@@ -665,9 +653,9 @@ $graph: colors.$accent;
 .server-empty {
   margin-top: 1.5rem;
   padding: 1.4rem;
-  color: $secondary-text;
-  background: $lane-bg;
-  border: 1px solid $line;
+  color: colors.$text-muted;
+  background: colors.$surface-deep;
+  border: 1px solid colors.$border-muted;
   border-radius: 4px;
   text-align: center;
   font-weight: 700;
