@@ -17,7 +17,10 @@
   answer: |
     You can sacrifice 10 minutes of playtime to stay on it. People will join servers 
     if they see there's 1-3 players on, eventually filling it up. You can also start a session for it 
-    on our Discord server.
+    on our
+  link:
+    label: Discord server
+    social: discord
 
 - question: How can I help?
   answer: | 
