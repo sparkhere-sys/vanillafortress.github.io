@@ -1,0 +1,41 @@
+---
+import Layout from '../layouts/default.astro';
+import ExternalLink from '../components/external_link.astro';
+import tools from '../data/tools.yaml';
+
+type Tool = {
+  name: string;
+  description: string;
+  link: string;
+};
+
+const list = tools as Tool[];
+---
+
+<Layout 
+  title="QOL Tools | VFTF"
+  description="Quality Of Life tools and mods for TF2.">
+
+<section class="page-intro">
+  <h1>QOL Tools and Mods</h1>
+  <p class="page-lead">A collection of quality of life tools and mods for TF2.</p>
+</section>
+
+
+<section class="faq-list" aria-labelledby="tools-title"> <!-- HACK: we're recycling the FAQ list styles. -->
+
+  <h2 id="tools-title">Tools</h2>
+  {list.map((item) => (
+    <article class="question">
+      <h3>{item.name}</h3>
+      <p>{item.description}</p>
+      
+      <div class="links">
+        <ExternalLink href={item.link}>Open</ExternalLink>
+      </div>
+    </article>
+  ))}
+
+</section>
+
+</Layout>

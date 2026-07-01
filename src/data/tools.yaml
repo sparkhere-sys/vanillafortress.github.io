@@ -1,0 +1,26 @@
+- name: FastPath Removal Mod
+  description: |
+    FastPath is one of the scummiest server networks in Valve multiplayer games.
+    Although the mod is a bit outdated, it will remove almost all FastPath spoofed servers
+    from the browser.
+  link: https://gamebanana.com/mods/download/289337#FileInfo_1351019
+
+- name: Server Browser
+  description: |
+    A powerful recreation of TF2's old server browser, with plenty of improvements and filters.
+  link: https://theothertored.github.io/tf2-server-browser/
+
+- name: Cosmetic Remover Tool
+  description: |
+    This tool lets you pick and choose cosmetics to keep or remove.
+  link: https://gamebanana.com/tools/20969
+
+- name: Mastercomfig Quickplay
+  description: |
+    A recreation of Quickplay that runs in your browser.
+  link: https://comfig.app/quickplay
+
+- name: Community HUD Fixes
+  description: |
+    Fixes to the default HUD, made by the community and CriticalFlaw.
+  link: https://github.com/CriticalFlaw/tf2hud-fixes
