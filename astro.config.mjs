@@ -4,6 +4,10 @@ import yaml from "@rollup/plugin-yaml";
 
 export default defineConfig({
   site: "https://vanillafortress.github.io",
+  redirects: {
+    "/servers": "/",
+    "/tools": "/about",
+  },
   integrations: [sitemap()],
   vite: {
     plugins: [

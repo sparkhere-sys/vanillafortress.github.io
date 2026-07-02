@@ -7,12 +7,19 @@
 
 .server-directory {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  // Regions grow sideways into new columns as long as each keeps ~24rem,
+  // then wrap; this adapts to any region count.
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
   align-items: start;
   gap: 1.6rem;
 }
 
 .server-region {
+  width: 100%;
+  // Keeps a lone region (e.g. when filtered) from stretching across the
+  // whole directory width.
+  max-width: 44rem;
+  justify-self: center;
   min-width: 0;
   position: relative;
   overflow: visible;
@@ -193,11 +200,6 @@
   border-radius: 0 0 4px 4px;
 }
 
-@media (max-width: 860px) {
-  .server-directory {
-    grid-template-columns: 1fr;
-  }
-}
 
 @media (max-width: 520px) {
   .server-region-header {

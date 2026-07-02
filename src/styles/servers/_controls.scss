@@ -3,13 +3,14 @@
 @use 'sass:color';
 @use '../colors';
 @use '../fonts';
+@use '../layout';
 
 // RULES
 
 .server-directory-controls,
 .server-directory,
 .server-empty {
-  width: min(100%, 1080px);
+  width: min(100%, layout.$content-width);
   margin-inline: auto;
 }
 
