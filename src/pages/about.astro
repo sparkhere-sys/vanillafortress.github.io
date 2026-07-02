@@ -65,7 +65,6 @@ const toolDomain = (link: string) => new URL(link).hostname.replace(/^www\./, ""
 
     <section class="faq-list tools-list" id="tools" aria-labelledby="tools-title">
       <h2 id="tools-title">QOL Tools</h2>
-      <p class="section-note">A collection of quality of life tools and mods for TF2.</p>
       {toolList.map((item) => (
         <article class="question">
           <h3>{item.name}</h3>
