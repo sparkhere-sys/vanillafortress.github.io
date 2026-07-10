@@ -3,6 +3,7 @@ import type { CommunityDefinition } from "../core/types";
 export default {
   name: "Koi's Pond",
   links: {
+    discord: "https://discord.gg/ASzBcgkzb2",
     website: "https://koipond.tf",
   },
   servers: [

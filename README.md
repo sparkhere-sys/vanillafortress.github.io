@@ -27,6 +27,7 @@ Astro will print the local development URL when the server starts.
 | `npm run build` | Resolve server metadata and build the production site. |
 | `npm run preview` | Preview the production build locally. |
 | `npm run resolve:servers` | Update generated BattleMetrics metadata. |
+| `npm run add:servers` | Add a server to the server directory. |
 
 ## Contributing
 
