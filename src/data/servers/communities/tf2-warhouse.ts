@@ -10,7 +10,7 @@ export default {
     {
       name: "TF2 Warhouse",
       region: "na",
-      ip: "50.20.251.219:9135",
+      ip: "warhouse.gamergod.net:22247",
     },
   ],
 } satisfies CommunityDefinition;
