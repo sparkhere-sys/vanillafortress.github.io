@@ -1,8 +1,6 @@
-import rawBattleMetricsCache from "./generated/battlemetrics.json";
-import { validateBattleMetricsCache } from "./core/validate";
 import { serverDefinitions } from "./definitions";
 import { regions } from "./regions";
-import type { RegionKey, Server, ServerDefinition, ServerGroup, ServerRegion } from "./core/types";
+import type { RegionKey, Server, ServerGroup, ServerRegion } from "./core/types";
 
 export type {
   CommunityDefinition,
@@ -17,27 +15,11 @@ export type {
 
 export { serverDefinitions } from "./definitions";
 
-const battlemetricsCache = validateBattleMetricsCache(rawBattleMetricsCache, serverDefinitions);
-
-const resolveServer = (
-  server: ServerDefinition,
-): Server => {
-  const { countryOverride, ...definition } = server;
-  const battlemetrics = battlemetricsCache[server.ip];
-
-  return {
-    ...definition,
-    countryOverride,
-    id: battlemetrics.id,
-    country: countryOverride ?? battlemetrics.country,
-  };
-};
-
 const groupsForRegion = (region: RegionKey): ServerGroup[] =>
   serverDefinitions.flatMap((community) => {
     const servers = community.servers
       .filter((server) => server.region === region)
-      .map((server) => resolveServer(server));
+      .map((server) => server);
 
     return servers.length > 0
       ? [{ name: community.name, links: community.links, servers }]

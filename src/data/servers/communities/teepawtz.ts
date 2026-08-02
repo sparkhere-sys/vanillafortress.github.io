@@ -10,6 +10,7 @@ export default {
       name: "Teepawtz.tf",
       region: "na",
       ip: "teapot.ggwp.cc:22189",
+      country: "us",
     },
   ],
 } satisfies CommunityDefinition;

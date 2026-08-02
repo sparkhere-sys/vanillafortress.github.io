@@ -28,7 +28,7 @@ type ServerDraft = {
   name: string;
   region: RegionKey;
   ip: string;
-  countryOverride?: string;
+  country: string;
 };
 
 type CommunitySource = CommunityDefinition & {
@@ -169,11 +169,7 @@ function renderCommunityGrid(communities: readonly CommunitySource[]) {
 }
 
 function renderServer(server: ServerDraft, indent = "    ") {
-  const countryOverride = server.countryOverride
-    ? `\n${indent}  countryOverride: "${server.countryOverride}",`
-    : "";
-
-  return `${indent}{\n${indent}  name: "${server.name}",\n${indent}  region: "${server.region}",\n${indent}  ip: "${server.ip}",${countryOverride}\n${indent}},`;
+  return `${indent}{\n${indent}  name: "${server.name}",\n${indent}  region: "${server.region}",\n${indent}  ip: "${server.ip}",\n${indent}  country: "${server.country}",\n${indent}},`;
 }
 
 function renderNewCommunity(
@@ -317,12 +313,9 @@ function renderPreviewSummary(community: CommunityChoice, servers: ServerDraft[]
 
   servers.forEach((server, index) => {
     const region = `${getRegionLabel(server.region)} ${color.muted(`(${server.region})`)}`;
-    const countryOverride = server.countryOverride
-      ? ` ${color.muted(`country override: ${server.countryOverride}`)}`
-      : "";
 
     console.log(
-      `${color.accent(`${index + 1}.`)} ${server.name} ${color.muted("-")} ${region} ${color.muted("-")} ${server.ip}${countryOverride}`,
+      `${color.accent(`${index + 1}.`)} ${server.name} ${color.muted("-")} ${region} ${color.muted("-")} ${server.ip} ${color.muted(`(${server.country.toUpperCase()})`)}`,
     );
   });
 }
@@ -485,9 +478,11 @@ async function askServer(usedIps: Set<string>): Promise<ServerDraft> {
       continue;
     }
 
-    const countryOverride = formatOptional(
-      await ask("Country override, if needed (optional): "),
-    );
+    const country = (await askRequired("Country code (two lowercase letters): ")).toLowerCase();
+    if (!/^[a-z]{2}$/.test(country)) {
+      console.log(color.error("Country must be a two-letter code, such as us or de."));
+      continue;
+    }
 
     usedIps.add(ip);
 
@@ -495,7 +490,7 @@ async function askServer(usedIps: Set<string>): Promise<ServerDraft> {
       name,
       region,
       ip,
-      countryOverride,
+      country,
     };
   }
 }
@@ -553,9 +548,8 @@ async function main() {
   console.log(color.success("\nServer directory updated."));
 
   console.log(`\n${color.title("Next steps")}`);
-  console.log(`${color.success("1.")} npm run resolve:servers`);
-  console.log(`${color.success("2.")} npm run check`);
-  console.log(`${color.success("3.")} npm run build`);
+  console.log(`${color.success("1.")} npm run check`);
+  console.log(`${color.success("2.")} npm run build`);
 }
 
 try {
