@@ -1,4 +1,6 @@
 ---
+import { lookup } from "node:dns/promises";
+import { isIP } from "node:net";
 import type { Server } from "../data/servers";
 import arrowUpIcon from "lucide-static/icons/arrow-up.svg?url";
 import connectIcon from "lucide-static/icons/arrow-right.svg?url";
@@ -11,6 +13,13 @@ type Props = {
 };
 
 const { server, group, regionLabel } = Astro.props;
+const separator = server.ip.lastIndexOf(":");
+const serverHost = server.ip.slice(0, separator);
+const serverPort = server.ip.slice(separator + 1);
+const queryHost = isIP(serverHost)
+  ? serverHost
+  : await lookup(serverHost, { family: 4 }).then(({ address }) => address).catch(() => serverHost);
+const queryAddress = `${queryHost}:${serverPort}`;
 const connectUrl = `steam://connect/${server.ip}`;
 const country = server.country?.toLowerCase();
 const flagStyle = country
@@ -28,8 +37,7 @@ const searchText = [
 
 <article
   class="server-card"
-  data-server-id={server.id}
-  data-country-override={server.countryOverride}
+  data-server-address={queryAddress}
   data-region={server.region}
   data-search={searchText}
   data-status="loading"
