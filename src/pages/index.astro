@@ -156,37 +156,22 @@ const serverCount = serverRegions.reduce(
 <p class="server-empty" hidden>No servers match that search.</p>
 
 <script>
-  type BattleMetricsAttributes = {
-    country?: string;
-    details?: {
-      map?: string;
-    };
-    maxPlayers?: number;
-    name?: string;
-    players?: number;
-    rank?: number;
-    status?: string;
+  type ServerBrowserStatus = {
+    server: string;
+    name: string;
+    map: string;
+    players: number;
+    maxPlayers: number;
   };
 
-  type BattleMetricsHistoryPoint = {
-    attributes?: {
-      value?: number;
-    };
+  type ServerBrowserHistoryPoint = {
+    timestamp?: number;
+    player_count?: number;
   };
 
-  type CachedServerStatus = {
-    attributes: BattleMetricsAttributes;
-    cachedAt: number;
-  };
-
-  type CachedServerHistory = {
-    points: number[];
-    cachedAt: number;
-  };
-
-  const statusCacheLifetime = 60_000;
+  const serverBrowserApi = "https://serverbrowser.tf/api";
+  const serverBrowserRetryDelays = [300, 900];
   const historyCacheLifetime = 10 * 60_000;
-  const battleMetricsRetryDelays = [300, 900];
   const copyResetTimers = new WeakMap<HTMLButtonElement, number>();
   const historyPoints = new WeakMap<HTMLElement, number[]>();
 
@@ -269,7 +254,7 @@ const serverCount = serverRegions.reduce(
     if (!graph) return;
 
     const { context, width, height } = graph;
-    const ordered = points.length > 1 ? [...points].reverse() : [0, 0];
+    const ordered = points.length > 1 ? points : [0, 0];
     const { maximum, lower, upper } = getHistoryScale(card, ordered);
     const inset = 3;
 
@@ -333,36 +318,25 @@ const serverCount = serverRegions.reduce(
     target.textContent = loaded ? `${total} ${total === 1 ? "player" : "players"}` : "-- players";
   };
 
-  const renderStatus = (card: HTMLElement, attributes: BattleMetricsAttributes) => {
-    const players = Number(attributes.players ?? 0);
-    const maxPlayers = Number(attributes.maxPlayers ?? 0);
-    const status = String(attributes.status ?? "unknown").toLowerCase();
+  const renderStatus = (card: HTMLElement, server: ServerBrowserStatus) => {
+    const players = Number(server.players ?? 0);
+    const maxPlayers = Number(server.maxPlayers ?? 0);
 
-    card.dataset.status = status;
+    card.dataset.status = "online";
     card.dataset.playerStatus = "loaded";
     card.dataset.currentPlayers = String(players);
     card.dataset.maxPlayers = String(maxPlayers);
-    setText(card, "[data-status-text]", status === "online" ? "Online" : status);
+    setText(card, "[data-status-text]", "Online");
     setText(card, "[data-player-current]", String(players));
     setText(card, "[data-player-max]", maxPlayers ? String(maxPlayers) : "--");
-    setText(card, "[data-server-name]", attributes.name ?? "Unknown server");
-    setText(card, "[data-map]", attributes.details?.map ?? "Unknown map");
+    setText(card, "[data-server-name]", server.name ?? "Unknown server");
+    setText(card, "[data-map]", server.map ?? "Unknown map");
 
     card.dataset.search = [
       card.dataset.search,
-      attributes.name,
-      attributes.details?.map,
-      attributes.country,
+      server.name,
+      server.map,
     ].filter(Boolean).join(" ").toLowerCase();
-
-    const country = (card.dataset.countryOverride ?? attributes.country)?.toLowerCase();
-    const flag = card.querySelector("[data-country-flag]");
-    if (country && /^[a-z]{2}$/.test(country) && flag instanceof HTMLElement) {
-      flag.style.backgroundImage = `url("https://flagcdn.com/${country}.svg")`;
-      flag.setAttribute("role", "img");
-      flag.setAttribute("aria-label", country.toUpperCase());
-      flag.removeAttribute("aria-hidden");
-    }
 
     const points = historyPoints.get(card);
     if (points) renderHistory(card, points);
@@ -381,94 +355,52 @@ const serverCount = serverRegions.reduce(
     updateRegionPlayerTotal(card);
   };
 
-  const readCache = <Value,>(key: string, lifetime: number): Value | null => {
+  const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === "object" && value !== null && !Array.isArray(value);
+
+  const isNonNegativeNumber = (value: unknown): value is number =>
+    typeof value === "number" && Number.isFinite(value) && value >= 0;
+
+  const fetchWithRetries = async (url: URL | string) => {
+    const attemptCount = serverBrowserRetryDelays.length + 1;
+
+    for (let attempt = 0; attempt < attemptCount; attempt += 1) {
+      try {
+        const response = await fetch(url);
+        if (response.ok || attempt === attemptCount - 1) return response;
+      } catch (error) {
+        if (attempt === attemptCount - 1) throw error;
+      }
+
+      await new Promise((resolve) => {
+        window.setTimeout(resolve, serverBrowserRetryDelays[attempt]);
+      });
+    }
+
+    throw new Error("serverbrowser.tf request exhausted its retry attempts");
+  };
+
+  const readHistoryCache = (address: string): number[] | null => {
+    const key = `vftf:serverbrowser-history:${address}`;
     const cached = sessionStorage.getItem(key);
     if (!cached) return null;
 
     try {
-      const value = JSON.parse(cached) as Value & { cachedAt: number };
-      if (Date.now() - value.cachedAt < lifetime) return value;
+      const value = JSON.parse(cached) as { cachedAt?: unknown; points?: unknown };
+      if (
+        isNonNegativeNumber(value.cachedAt) &&
+        Date.now() - value.cachedAt < historyCacheLifetime &&
+        Array.isArray(value.points) &&
+        value.points.every(isNonNegativeNumber)
+      ) {
+        return value.points;
+      }
     } catch {
       // Invalid cache entries are replaced by the next request.
     }
 
     sessionStorage.removeItem(key);
     return null;
-  };
-
-  const fetchBattleMetrics = async (url: string) => {
-    const attemptCount = battleMetricsRetryDelays.length + 1;
-
-    for (let attempt = 0; attempt < attemptCount; attempt += 1) {
-      try {
-        const response = await fetch(url);
-        const shouldRetry = response.status === 429 || response.status >= 500;
-
-        if (!shouldRetry || attempt === attemptCount - 1) return response;
-      } catch (error) {
-        if (attempt === attemptCount - 1) throw error;
-      }
-
-      await new Promise((resolve) => {
-        window.setTimeout(resolve, battleMetricsRetryDelays[attempt]);
-      });
-    }
-
-    throw new Error("BattleMetrics request exhausted its retry attempts");
-  };
-
-  const loadServerStatus = async (card: HTMLElement) => {
-    const id = card.dataset.serverId;
-    if (!id) return renderStatusError(card);
-
-    const cacheKey = `vftf:battlemetrics:${id}`;
-    const cached = readCache<CachedServerStatus>(cacheKey, statusCacheLifetime);
-    if (cached) return renderStatus(card, cached.attributes);
-
-    try {
-      const response = await fetchBattleMetrics(`https://api.battlemetrics.com/servers/${id}`);
-      if (!response.ok) throw new Error(`BattleMetrics returned ${response.status}`);
-
-      const json = await response.json();
-      const attributes = json.data?.attributes as BattleMetricsAttributes | undefined;
-      if (!attributes) throw new Error("BattleMetrics response was missing attributes");
-
-      sessionStorage.setItem(cacheKey, JSON.stringify({ attributes, cachedAt: Date.now() }));
-      renderStatus(card, attributes);
-    } catch (error) {
-      console.error("Could not load BattleMetrics server status", error);
-      renderStatusError(card);
-    }
-  };
-
-  const loadServerHistory = async (card: HTMLElement) => {
-    const id = card.dataset.serverId;
-    if (!id) return renderHistoryError(card);
-
-    const cacheKey = `vftf:battlemetrics-history:${id}`;
-    const cached = readCache<CachedServerHistory>(cacheKey, historyCacheLifetime);
-    if (cached) return renderHistory(card, cached.points);
-
-    const start = new Date(Date.now() - 24 * 60 * 60_000).toISOString();
-    const stop = new Date().toISOString();
-
-    try {
-      const response = await fetchBattleMetrics(
-        `https://api.battlemetrics.com/servers/${id}/player-count-history?start=${encodeURIComponent(start)}&stop=${encodeURIComponent(stop)}`,
-      );
-      if (!response.ok) throw new Error(`BattleMetrics history returned ${response.status}`);
-
-      const json = await response.json();
-      const points = ((json.data ?? []) as BattleMetricsHistoryPoint[])
-        .map((point) => Number(point.attributes?.value ?? 0))
-        .filter(Number.isFinite);
-
-      sessionStorage.setItem(cacheKey, JSON.stringify({ points, cachedAt: Date.now() }));
-      renderHistory(card, points);
-    } catch (error) {
-      console.error("Could not load BattleMetrics player history", error);
-      renderHistoryError(card);
-    }
   };
 
   document.querySelectorAll(".copy-ip").forEach((element) => {
@@ -510,6 +442,99 @@ const serverCount = serverRegions.reduce(
   const searchClear = document.querySelector(".server-search-clear");
   const emptyState = document.querySelector(".server-empty");
   let activeRegion = "all";
+
+  const getServerAddress = (card: HTMLElement) => card.dataset.serverAddress?.toLowerCase();
+
+  const isServerStatus = (value: unknown): value is ServerBrowserStatus =>
+    isRecord(value) &&
+    typeof value.server === "string" &&
+    typeof value.name === "string" &&
+    typeof value.map === "string" &&
+    isNonNegativeNumber(value.players) &&
+    isNonNegativeNumber(value.maxPlayers);
+
+  const loadServerStatuses = async () => {
+    const addresses = cards.map(getServerAddress).filter((address): address is string => Boolean(address));
+    const url = new URL(`${serverBrowserApi}/servers`);
+    url.searchParams.set("ip", addresses.join(","));
+
+    let servers = new Map<string, ServerBrowserStatus>();
+    try {
+      const response = await fetchWithRetries(url);
+      if (!response.ok) throw new Error(`serverbrowser.tf returned ${response.status}`);
+
+      const value: unknown = await response.json();
+      if (!Array.isArray(value)) throw new Error("serverbrowser.tf returned invalid server data");
+      servers = new Map(
+        value.filter(isServerStatus).map((server) => [
+          server.server.toLowerCase(),
+          server,
+        ]),
+      );
+    } catch (error) {
+      console.error("Could not load server status from serverbrowser.tf", error);
+    }
+
+    cards.forEach((card) => {
+      const address = getServerAddress(card);
+      const server = address ? servers.get(address) : undefined;
+
+      if (server) renderStatus(card, server);
+      else renderStatusError(card);
+    });
+  };
+
+  const loadServerHistory = async (card: HTMLElement) => {
+    const address = getServerAddress(card);
+    if (!address) return renderHistoryError(card);
+
+    const cached = readHistoryCache(address);
+    if (cached) return renderHistory(card, cached);
+
+    try {
+      const response = await fetchWithRetries(
+        `${serverBrowserApi}/server-details-v2/${encodeURIComponent(address)}`,
+      );
+      if (!response.ok) throw new Error(`serverbrowser.tf returned ${response.status}`);
+
+      const value: unknown = await response.json();
+      if (!isRecord(value) || !Array.isArray(value.playerCounts)) {
+        throw new Error("serverbrowser.tf returned invalid history data");
+      }
+
+      const intervalSeconds = 30 * 60;
+      const end = Math.floor(Date.now() / 1_000 / intervalSeconds) * intervalSeconds;
+      const start = end - 24 * 60 * 60;
+      const byTimestamp = new Map<number, number>();
+      value.playerCounts.forEach((point: ServerBrowserHistoryPoint) => {
+        if (
+          !isNonNegativeNumber(point.timestamp) ||
+          !isNonNegativeNumber(point.player_count) ||
+          point.timestamp < start ||
+          point.timestamp > end
+        ) return;
+
+        byTimestamp.set(
+          point.timestamp,
+          Math.max(byTimestamp.get(point.timestamp) ?? 0, point.player_count),
+        );
+      });
+
+      const points = Array.from(
+        { length: 49 },
+        (_, index) => byTimestamp.get(start + index * intervalSeconds) ?? 0,
+      );
+
+      sessionStorage.setItem(
+        `vftf:serverbrowser-history:${address}`,
+        JSON.stringify({ cachedAt: Date.now(), points }),
+      );
+      renderHistory(card, points);
+    } catch (error) {
+      console.error(`Could not load player history for ${address}`, error);
+      renderHistoryError(card);
+    }
+  };
 
   const applyServerFilters = () => {
     const query = searchInput instanceof HTMLInputElement
@@ -558,10 +583,8 @@ const serverCount = serverRegions.reduce(
     });
   });
 
-  cards.forEach((element) => {
-    void loadServerStatus(element);
-    void loadServerHistory(element);
-  });
+  void loadServerStatuses();
+  cards.forEach((card) => void loadServerHistory(card));
 
   const graphResizeObserver = new ResizeObserver((entries) => {
     entries.forEach((entry) => {

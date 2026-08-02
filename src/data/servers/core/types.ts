@@ -15,7 +15,7 @@ export type ServerDefinition = {
   name: string;
   region: RegionKey;
   ip: string;
-  countryOverride?: string;
+  country: string;
 };
 
 export type CommunityDefinition = {
@@ -24,10 +24,7 @@ export type CommunityDefinition = {
   servers: ServerDefinition[];
 };
 
-export type Server = ServerDefinition & {
-  id: number;
-  country?: string;
-};
+export type Server = ServerDefinition;
 
 export type ServerGroup = {
   name: string;
@@ -39,10 +36,3 @@ export type ServerRegion = RegionDefinition & {
   groups: ServerGroup[];
   serverCount: number;
 };
-
-export type BattleMetricsMetadata = {
-  id: number;
-  country?: string;
-};
-
-export type BattleMetricsCache = Record<string, BattleMetricsMetadata>;

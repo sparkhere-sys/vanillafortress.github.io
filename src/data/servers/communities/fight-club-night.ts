@@ -10,6 +10,7 @@ export default {
       name: "Fight Club Night",
       region: "na",
       ip: "204.12.240.189:27015",
+      country: "us",
     },
   ],
 } satisfies CommunityDefinition;

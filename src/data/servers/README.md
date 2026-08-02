@@ -1,13 +1,8 @@
 # Adding servers and communities
 
 The server directory is defined in TypeScript under
-[`communities`](./communities). BattleMetrics IDs and countries are resolved
-automatically from each server address during development and builds.
-Community files are loaded automatically and displayed alphabetically by
-community name.
-
-Do not edit [`generated/battlemetrics.json`](./generated/battlemetrics.json) by
-hand.
+[`communities`](./communities). Community files are loaded automatically and
+displayed alphabetically by community name.
 
 ## Assisted workflow
 
@@ -17,12 +12,11 @@ Run the helper to add a community or append servers to an existing community:
 npm run add:server
 ```
 
-The helper validates the community name, links, region, address format, and port
-range before writing changes. After it updates the server directory, resolve the
-BattleMetrics metadata and verify the site:
+The helper validates the community name, links, region, country, address format,
+and port range before writing changes. After it updates the server directory,
+verify the site:
 
 ```sh
-npm run resolve:servers
 npm run check
 npm run build
 ```
@@ -39,16 +33,11 @@ You can also edit the TypeScript files manually.
      name: "Example Server",
      region: "eu",
      ip: "server.example.com:27015",
+     country: "de",
    }
    ```
 
-3. Resolve its BattleMetrics metadata:
-
-   ```sh
-   npm run resolve:servers
-   ```
-
-4. Commit both the community file and the updated generated metadata.
+3. Run the checks and commit the community file.
 
 ## Add a community
 
@@ -70,6 +59,7 @@ export default {
       name: "Example Community EU",
       region: "eu",
       ip: "server.example.com:27015",
+      country: "de",
     },
   ],
 } satisfies CommunityDefinition;
@@ -81,7 +71,6 @@ than leaving empty strings.
 Then run:
 
 ```sh
-npm run resolve:servers
 npm run check
 npm run build
 ```
@@ -93,24 +82,8 @@ npm run build
 | `name` | Yes | Display name with no leading or trailing whitespace. |
 | `region` | Yes | One of `eu`, `na`, `sa`, `asia`, `oce`, `af`, or `me`. |
 | `ip` | Yes | Unique address in `host:port` format. Bracketed IPv6 is supported. |
-| `countryOverride` | No | Lowercase two-letter country code when BattleMetrics reports the wrong country. |
+| `country` | Yes | Lowercase two-letter country code used for the server flag. |
 
 Community names and server addresses must be unique across the directory. Each
 community must contain at least one server. Community links must use HTTP or
 HTTPS.
-
-## BattleMetrics resolution
-
-`npm run resolve:servers` searches BattleMetrics using each configured address,
-verifies the host and port, and updates the generated metadata cache. Existing
-cache entries are reused so routine builds do not repeatedly query the API.
-
-To refresh every cached entry:
-
-```sh
-npm run resolve:servers -- --refresh
-```
-
-If a new server cannot be resolved, confirm that its address is correct and
-that the server appears on BattleMetrics. The resolver will fail rather than
-silently adding an incorrect ID.

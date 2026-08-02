@@ -11,6 +11,7 @@ export default {
       name: "BBQ Party",
       region: "eu",
       ip: "79.76.47.29:27015",
+      country: "se",
     },
   ],
 } satisfies CommunityDefinition;

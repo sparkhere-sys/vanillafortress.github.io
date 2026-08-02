@@ -11,6 +11,7 @@ export default {
       name: "Agartha.tf",
       region: "na",
       ip: "agartha.gamergod.net:22133",
+      country: "us",
     },
   ],
 } satisfies CommunityDefinition;

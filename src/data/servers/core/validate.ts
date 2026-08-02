@@ -1,6 +1,4 @@
 import type {
-  BattleMetricsCache,
-  BattleMetricsMetadata,
   CommunityDefinition,
   RegionDefinition,
   ServerDefinition,
@@ -47,8 +45,8 @@ const validateServer = (server: ServerDefinition, context: string) => {
   validateName(server.name, context);
   validateAddress(server, context);
 
-  if (server.countryOverride && !/^[a-z]{2}$/.test(server.countryOverride)) {
-    fail(context, `country override "${server.countryOverride}" must be a lowercase two-letter code`);
+  if (!/^[a-z]{2}$/.test(server.country)) {
+    fail(context, `country "${server.country}" must be a lowercase two-letter code`);
   }
 };
 
@@ -101,56 +99,4 @@ export const validateServerDirectory = (
   });
 
   return communities;
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-const validateMetadata = (value: unknown, context: string): BattleMetricsMetadata => {
-  if (!isRecord(value)) return fail(context, "entry must be an object");
-
-  if (typeof value.id !== "number" || !Number.isSafeInteger(value.id) || value.id < 1) {
-    fail(context, `ID "${value.id}" must be a positive integer`);
-  }
-
-  if (value.country !== undefined && (typeof value.country !== "string" || !/^[a-z]{2}$/.test(value.country))) {
-    fail(context, `country "${value.country}" must be a lowercase two-letter code`);
-  }
-
-  return value as BattleMetricsMetadata;
-};
-
-export const validateBattleMetricsCache = (
-  value: unknown,
-  communities: readonly CommunityDefinition[],
-): BattleMetricsCache => {
-  if (!isRecord(value)) return fail("BattleMetrics cache", "root must be an object");
-
-  const configuredAddresses = new Set(
-    communities.flatMap((community) => community.servers.map((server) => server.ip)),
-  );
-  const metadata: BattleMetricsCache = {};
-  const ids = new Set<number>();
-
-  Object.entries(value).forEach(([address, entry]) => {
-    if (!configuredAddresses.has(address)) {
-      fail("BattleMetrics cache", `stale entry "${address}"; run "npm run resolve:servers"`);
-    }
-
-    const validated = validateMetadata(entry, `BattleMetrics cache > ${address}`);
-    if (ids.has(validated.id)) {
-      fail("BattleMetrics cache", `duplicate ID "${validated.id}"`);
-    }
-
-    metadata[address] = validated;
-    ids.add(validated.id);
-  });
-
-  configuredAddresses.forEach((address) => {
-    if (!metadata[address]) {
-      fail("BattleMetrics cache", `missing entry for "${address}"; run "npm run resolve:servers"`);
-    }
-  });
-
-  return metadata;
 };
