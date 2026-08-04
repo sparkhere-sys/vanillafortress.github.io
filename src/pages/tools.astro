@@ -1,0 +1,43 @@
+---
+import Layout from "../layouts/default.astro";
+import ExternalLink from "../components/external_link.astro";
+import tools from "../data/tools.yaml";
+
+type Tool = {
+  name: string;
+  description: string;
+  link: string;
+};
+
+const toolList = tools as Tool[];
+const toolDomain = (link: string) => new URL(link).hostname.replace(/^www\./, "");
+---
+
+<Layout
+  title="QOL Tools | VFTF"
+  description="Useful community-made tools for Team Fortress 2.">
+
+  <section class="page-intro">
+    <h1>QOL Tools</h1>
+    <p class="page-lead">
+      Useful community-made tools for improving your TF2 experience.
+    </p>
+  </section>
+
+  <section class="tools-list-grid" aria-label="QOL tools">
+    {toolList.map((item) => (
+      <article class="question tool-entry">
+        <h3>{item.name}</h3>
+        <p>{item.description}</p>
+
+        <div class="links">
+          <ExternalLink href={item.link}>
+            Open<span class="visually-hidden"> {item.name}</span>
+          </ExternalLink>
+          <span class="tool-domain">{toolDomain(item.link)}</span>
+        </div>
+      </article>
+    ))}
+  </section>
+
+</Layout>

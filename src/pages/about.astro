@@ -3,7 +3,6 @@ import Layout from "../layouts/default.astro";
 import ExternalLink from "../components/external_link.astro";
 import faq from "../data/faq.yaml";
 import socials from "../data/socials.yaml";
-import tools from "../data/tools.yaml";
 
 type Social = keyof typeof socials;
 
@@ -16,16 +15,7 @@ type FAQ = {
   };
 };
 
-type Tool = {
-  name: string;
-  description: string;
-  link: string;
-};
-
 const questions: FAQ[] = faq;
-const toolList = tools as Tool[];
-
-const toolDomain = (link: string) => new URL(link).hostname.replace(/^www\./, "");
 ---
 
 <Layout
@@ -46,8 +36,7 @@ const toolDomain = (link: string) => new URL(link).hostname.replace(/^www\./, ""
     </div>
   </section>
 
-  <div class="about-columns">
-
+  <div class="about-content">
     <section class="faq-list" id="faq" aria-labelledby="faq-title">
       <h2 id="faq-title">FAQ</h2>
       {questions.map((item) => (
@@ -59,21 +48,6 @@ const toolDomain = (link: string) => new URL(link).hostname.replace(/^www\./, ""
               <> <ExternalLink href={socials[item.link.social]}>{item.link.label}</ExternalLink>.</>
             )}
           </p>
-        </article>
-      ))}
-    </section>
-
-    <section class="faq-list tools-list" id="tools" aria-labelledby="tools-title">
-      <h2 id="tools-title">QOL Tools</h2>
-      {toolList.map((item) => (
-        <article class="question">
-          <h3>{item.name}</h3>
-          <p>{item.description}</p>
-
-          <div class="links">
-            <ExternalLink href={item.link}>Open<span class="visually-hidden"> {item.name}</span></ExternalLink>
-            <span class="tool-domain">{toolDomain(item.link)}</span>
-          </div>
         </article>
       ))}
     </section>
