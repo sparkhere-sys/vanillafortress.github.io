@@ -6,7 +6,6 @@ export default defineConfig({
   site: "https://vanillafortress.github.io",
   redirects: {
     "/servers": "/",
-    "/tools": "/about",
   },
   integrations: [sitemap()],
   vite: {
