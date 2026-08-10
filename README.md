@@ -32,3 +32,10 @@ Astro will print the local development URL when the server starts.
 
 See [Adding servers and communities](src/data/servers/README.md) for the server
 directory workflow.
+
+## Licensing
+
+Unless otherwise noted, the original source code in this repository is
+licensed under the [MIT License](LICENSE).
+
+See the [third party notices](THIRD_PARTY_NOTICES.md) file.
