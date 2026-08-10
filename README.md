@@ -35,12 +35,7 @@ directory workflow.
 
 ## Licensing
 
-All source code files in the `src/` and `scripts/` directories are licensed under the MIT License.
+Unless otherwise noted, the original source code in this repository is
+licensed under the [MIT License](LICENSE).
 
-See the [LICENSE](LICENSE) for details.
-
-> [!IMPORTANT]
->
-> **The TF2 Fonts are owned by the TF Team and Valve Corporation.**
->
-> **VFTF does not own them.**
+See the [third party notices](THIRD_PARTY_NOTICES.md) file.
