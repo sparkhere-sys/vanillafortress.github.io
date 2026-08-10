@@ -1,8 +1,7 @@
 # Adding servers and communities
 
-The server directory is defined in TypeScript under
-[`communities`](./communities). Community files are loaded automatically and
-displayed alphabetically by community name.
+The server directory is defined in TypeScript under [`communities`](./communities). 
+Community files are loaded automatically and displayed alphabetically by community name.
 
 ## Assisted workflow
 
@@ -41,7 +40,7 @@ You can also edit the TypeScript files manually.
 
 ## Add a community
 
-Create a kebab-case TypeScript file in [`communities`](./communities), such as
+Create a `kebab-case` TypeScript file in [`communities`](./communities), such as
 `example-community.ts`:
 
 ```ts

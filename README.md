@@ -1,4 +1,4 @@
-# Vanilla Fortress
+![Vanilla Fortress](src/assets/vftf/logo.png)
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/vanillafortress/vanillafortress.github.io/deploy.yml?branch=main&style=for-the-badge&logo=githubactions&logoColor=%23fdf9cd&labelColor=%23f5722c&color=%23fdf9cd)
 
@@ -32,3 +32,15 @@ Astro will print the local development URL when the server starts.
 
 See [Adding servers and communities](src/data/servers/README.md) for the server
 directory workflow.
+
+## Licensing
+
+All source code files in the `src/` and `scripts/` directories are licensed under the MIT License.
+
+See the [LICENSE](LICENSE) for details.
+
+> [!IMPORTANT]
+>
+> **The TF2 Fonts are owned by the TF Team and Valve Corporation.**
+>
+> **VFTF does not own them.**
