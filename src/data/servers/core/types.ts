@@ -16,6 +16,7 @@ export type ServerDefinition = {
   region: RegionKey;
   ip: string;
   country: string;
+  is_tf2c?: boolean | false;
 };
 
 export type CommunityDefinition = {
@@ -24,7 +25,7 @@ export type CommunityDefinition = {
   servers: ServerDefinition[];
 };
 
-export type Server = ServerDefinition;
+export type Server = ServerDefinition; // where is this ever used? this is just an alias. -spark
 
 export type ServerGroup = {
   name: string;
