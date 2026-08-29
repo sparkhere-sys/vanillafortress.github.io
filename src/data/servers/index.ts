@@ -15,27 +15,34 @@ export type {
 
 export { serverDefinitions } from "./definitions";
 
-const groupsForRegion = (region: RegionKey): ServerGroup[] =>
+const groupsForRegion = (region: RegionKey, isTF2C = false): ServerGroup[] =>
   serverDefinitions.flatMap((community) => {
-    const servers = community.servers
-      .filter((server) => server.region === region)
-      .map((server) => server);
+    const servers = community.servers.filter(
+      (server) =>
+        server.region === region &&
+        (isTF2C ? server.is_tf2c === true : server.is_tf2c !== true),
+    );
 
     return servers.length > 0
       ? [{ name: community.name, links: community.links, servers }]
       : [];
   });
 
-export const getServersByRegion = (region: RegionKey): Server[] =>
-  groupsForRegion(region).flatMap((group) => group.servers);
+const getServerRegions = (isTF2C = false): ServerRegion[] =>
+  regions
+    .map((region) => {
+      const groups = groupsForRegion(region.key, isTF2C);
 
-export const serverRegions: ServerRegion[] = regions
-  .map((region) => {
-    const groups = groupsForRegion(region.key);
-    return {
-      ...region,
-      groups,
-      serverCount: groups.reduce((total, group) => total + group.servers.length, 0),
-    };
-  })
-  .filter((region) => region.serverCount > 0);
+      return {
+        ...region,
+        groups,
+        serverCount: groups.reduce(
+          (total, group) => total + group.servers.length,
+          0,
+        ),
+      };
+    })
+    .filter((region) => region.serverCount > 0);
+
+export const serverRegions = getServerRegions();
+export const tf2cServerRegions = getServerRegions(true);

@@ -1,17 +1,14 @@
 ---
-import { Image } from "astro:assets";
 import Layout from "../layouts/default.astro";
 import ExternalLink from "../components/external_link.astro";
 import ServerCard from "../components/server_card.astro";
-import soldier from "../assets/vftf/transparent/soldier.svg";
 import discordIcon from "../assets/icons/discord.svg?url";
 import steamIcon from "../assets/icons/steam.svg?url";
-import socials from "../data/socials.yaml";
-import { serverRegions } from "../data/servers";
+import { tf2cServerRegions } from "../data/servers";
 import clearIcon from "lucide-static/icons/x.svg?url";
 import websiteIcon from "lucide-static/icons/globe.svg?url";
 
-const serverCount = serverRegions.reduce(
+const serverCount = tf2cServerRegions.reduce(
   (total, region) => total + region.serverCount,
   0,
 );
@@ -19,42 +16,15 @@ const serverCount = serverRegions.reduce(
 ---
 
 <Layout
-  title="Vanilla Fortress"
-  description="A community hub for finding and seeding vanilla TF2 servers.">
+  title="TF2 Classified | VFTF"
+  description="TF2 Classified server list"
+  noindex>
 
-<section class="home-hero">
-  <h1 class="visually-hidden">Vanilla Fortress</h1>
-
-  <p class="home-tagline page-lead">
-    VanillaFortress.tf is a community hub for finding and seeding vanilla TF2 servers.
-    {" "}<a href="/about/">Read more &gt;&gt;&gt;</a>
-    <!-- put a link to the tf2c page here EVENTUALLY, not now -->
+<section class="page-intro">
+  <h1>TF2C Servers</h1>
+  <p>
+    Looking for the <a href="/">main page</a>?
   </p>
-
-  <aside class="session-panel" aria-label="Session notifications">
-    <Image
-      class="session-soldier"
-      src={soldier}
-      alt=""
-      width={256}
-      height={144}
-      loading="eager"
-      decoding="async"
-    />
-    <div class="session-panel-content">
-      <h2>Session Notifications</h2>
-      <div class="links session-links">
-        <ExternalLink href={socials.discord}>
-          <span class="button-icon" style={`--icon: url("${discordIcon}")`} aria-hidden="true"></span>
-          Discord Server
-        </ExternalLink>
-        <ExternalLink href={socials.steam}>
-          <span class="button-icon" style={`--icon: url("${steamIcon}")`} aria-hidden="true"></span>
-          Steam Group
-        </ExternalLink>
-      </div>
-    </div>
-  </aside>
 </section>
 
 <section class="server-directory-controls" aria-label="Server filters">
@@ -82,7 +52,7 @@ const serverCount = serverRegions.reduce(
     <button type="button" data-region-filter="all" aria-pressed="true">
       All <span>{serverCount}</span>
     </button>
-    {serverRegions.map((region) => (
+    {tf2cServerRegions.map((region) => (
       <button type="button" data-region-filter={region.key} aria-pressed="false">
         {region.label} <span>{region.serverCount}</span>
       </button>
@@ -90,8 +60,8 @@ const serverCount = serverRegions.reduce(
   </div>
 </section>
 
-<section class="server-directory" aria-label="Vanilla Fortress servers">
-  {serverRegions.map((region) => (
+<section class="server-directory" aria-label="TF2 Classified servers">
+  {tf2cServerRegions.map((region) => (
     <section class="server-region" data-region-section={region.key}>
       <div class="server-region-header">
         <h2>{region.label}</h2>
