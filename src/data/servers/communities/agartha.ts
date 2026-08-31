@@ -9,6 +9,7 @@ export default {
   servers: [
     {
       name: "Agartha.tf",
+      slug: "agartha",
       region: "na",
       ip: "agartha.gamergod.net:22133",
       country: "us",

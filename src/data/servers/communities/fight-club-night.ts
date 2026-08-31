@@ -8,6 +8,7 @@ export default {
   servers: [
     {
       name: "Fight Club Night",
+      slug: "fight-club",
       region: "na",
       ip: "204.12.240.189:27015",
       country: "us",

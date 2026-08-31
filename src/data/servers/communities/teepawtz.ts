@@ -8,6 +8,7 @@ export default {
   servers: [
     {
       name: "Teepawtz.tf",
+      slug: "teepawtz",
       region: "na",
       ip: "teapot.ggwp.cc:22189",
       country: "us",

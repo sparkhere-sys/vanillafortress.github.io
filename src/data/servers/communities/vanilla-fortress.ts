@@ -4,9 +4,10 @@ export default {
   name: "Vanilla Fortress",
   servers: [
     {
-      name: "TF2C NYC",
+      name: "Vanilla Fortress TF2C (NYC)",
+      slug: "vftf-tf2c",
       region: "na",
-      ip: "134.122.125.240:27015",
+      ip: "209.222.101.211:5688",
       country: "us",
       is_tf2c: true,
     }
