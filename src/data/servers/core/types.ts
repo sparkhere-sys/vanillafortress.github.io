@@ -16,6 +16,7 @@ export type ServerDefinition = {
   region: RegionKey;
   ip: string;
   country: string;
+  slug?: string;
   is_tf2c?: boolean | false;
 };
 

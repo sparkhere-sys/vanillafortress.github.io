@@ -1,0 +1,52 @@
+---
+import { serverDefinitions } from "../data/servers";
+import Layout from "../layouts/default.astro";
+
+const server_param = Astro.url.searchParams.get("server");
+
+const server = serverDefinitions
+  .flatMap((community) => community.servers)
+  .find((server) => server.slug === server_param);
+
+const link = server && `steam://connect/${server.ip}`;
+---
+
+<Layout
+  title={server ? `Connect to ${server.name}` : "Server not found!"}
+  noindex>
+
+{server ? (
+<section class="page-intro">
+  <h1>Redirecting</h1>
+  <p class="page-lead">
+    You're being redirected to {server.name} right now.
+  </p>
+  <p class="page-lead">
+    If the redirect doesn't work, click this button:
+  </p>
+  <div class="links">
+    <a href={link}>Connect to {server.name}</a>
+  </div>
+</section>
+
+) : (
+
+<section class="page-intro">
+  <h1>Server not found!</h1>
+  <p class="page-lead">
+    The server you're trying to connect to doesn't exist.
+  </p>
+  <div class="links">
+    <a href="/">Return to homepage</a>
+  </div>
+</section>
+
+)}
+
+<script define:vars={{ link }} is:inline>
+  if (link) {
+    window.location.href = link;
+  }
+</script>
+
+</Layout>
