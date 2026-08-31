@@ -2,50 +2,57 @@
 import { serverDefinitions } from "../data/servers";
 import Layout from "../layouts/default.astro";
 
-const server_param = Astro.url.searchParams.get("server");
-
-const server = serverDefinitions
-  .flatMap((community) => community.servers)
-  .find((server) => server.slug === server_param);
-
-const link = server && `steam://connect/${server.ip}`;
+const servers = serverDefinitions.flatMap((community) => community.servers);
 ---
 
 <Layout
-  title={server ? `Connect to ${server.name}` : "Server not found!"}
+  title="Connect"
   noindex>
 
-{server ? (
 <section class="page-intro">
-  <h1>Redirecting</h1>
-  <p class="page-lead">
-    You're being redirected to {server.name} right now.
+  <h1 id="heading">Redirecting</h1>
+  <p class="page-lead" id="message">
+    You're being redirected to right now.
   </p>
-  <p class="page-lead">
+  <p class="page-lead" id="fallback">
     If the redirect doesn't work, click this button:
   </p>
   <div class="links">
-    <a href={link}>Connect to {server.name}</a>
+    <a id="connect" href="/">Connect</a>
   </div>
 </section>
 
-) : (
+<script define:vars={{ servers }} is:inline>
+  const server_param = new URLSearchParams(window.location.search).get("server");
+  const server = servers.find((server) => server.slug === server_param);
 
-<section class="page-intro">
-  <h1>Server not found!</h1>
-  <p class="page-lead">
-    The server you're trying to connect to doesn't exist.
-  </p>
-  <div class="links">
-    <a href="/">Return to homepage</a>
-  </div>
-</section>
+  if (server) {
+    const link = `steam://connect/${server.ip}`;
 
-)}
+    document.title = `Connect to ${server.name}`;
 
-<script define:vars={{ link }} is:inline>
-  if (link) {
+    document.querySelector("#message").textContent =
+      `You're being redirected to ${server.name} right now.`;
+    
+    document.querySelector("#connect").href = link;
+    document.querySelector("#connect").textContent =
+      `Connect to ${server.name}`;
+    
     window.location.href = link;
+  } else {
+    document.title = "Server not found!";
+
+    document.querySelector("#heading").textContent 
+      = "Server not found!";
+    
+    document.querySelector("#message").textContent
+      = "The server you're trying to connect to doesn't exist.";
+    
+    document.querySelector("#fallback").remove();
+
+    const link = document.querySelector("#connect");
+    link.href = "/";
+    link.textContent = "Return to homepage";
   }
 </script>
 
