@@ -132,7 +132,7 @@
     }
 
     &[aria-pressed="true"] {
-      color: colors.$surface-deep;
+      color: colors.$text-color;
       background: colors.$primary;
       border-color: rgba(colors.$text-color, 0.2);
       box-shadow: 0 3px 0 color.adjust(colors.$primary, $lightness: -25%);

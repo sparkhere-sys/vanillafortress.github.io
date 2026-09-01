@@ -86,7 +86,7 @@
 .server-lower {
   min-width: 0;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 6.85rem;
+  grid-template-columns: minmax(0, 1fr) 6.95rem; // nice
   gap: 0.7rem;
 }
 
@@ -186,11 +186,20 @@
 .server-address {
   min-width: 0;
   overflow: hidden;
+  border: 0;
+  padding: 0;
+  background: none;
   color: colors.$text-muted;
   font: 400 0.9rem/1 fonts.$tf2-secondary;
   text-overflow: ellipsis;
+  text-decoration: underline;
+  text-underline-offset: 2px;
   white-space: nowrap;
+  cursor: pointer;
 
+  &:hover {
+    color: colors.$text-soft;
+  }
 }
 
 .server-meta-separator {
@@ -250,6 +259,7 @@
 
   > button {
     cursor: pointer;
+    min-width: 0;
   }
 }
 

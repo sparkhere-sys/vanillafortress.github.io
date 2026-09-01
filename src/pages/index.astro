@@ -19,8 +19,7 @@ const serverCount = serverRegions.reduce(
 ---
 
 <Layout
-  title="Vanilla Fortress"
-  description="A community hub for finding and seeding vanilla TF2 servers.">
+  title="Vanilla Fortress">
 
 <section class="home-hero">
   <h1 class="visually-hidden">Vanilla Fortress</h1>
@@ -408,23 +407,39 @@ const serverCount = serverRegions.reduce(
     if (!(element instanceof HTMLButtonElement)) return;
 
     element.addEventListener("click", async () => {
-      const ip = element.dataset.copy;
-      if (!ip) return;
+      const link = element.dataset.copy;
+      if (!link) return;
 
       try {
-        await navigator.clipboard.writeText(`connect ${ip}`);
+        await navigator.clipboard.writeText(new URL(link, window.location.origin).href);
+
         const label = element.querySelector("[data-copy-label]");
         const pendingReset = copyResetTimers.get(element);
         if (pendingReset !== undefined) window.clearTimeout(pendingReset);
 
-        if (label) label.textContent = "Copied";
+        if (label) label.textContent = "Copied!";
         const resetTimer = window.setTimeout(() => {
-          if (label) label.textContent = "Copy IP";
+          if (label) label.textContent = "Copy URL";
           copyResetTimers.delete(element);
         }, 1000);
         copyResetTimers.set(element, resetTimer);
       } catch (error) {
-        console.error("Could not copy server IP", error);
+        console.error("Could not copy connect page link", error);
+      }
+    });
+  });
+
+  document.querySelectorAll(".server-address").forEach((element) => {
+    if (!(element instanceof HTMLButtonElement)) return;
+
+    element.addEventListener("click", async () => {
+      const ip = element.dataset.copy;
+      if (!ip) return;
+
+      try {
+        await navigator.clipboard.writeText(ip);
+      } catch (error) {
+        console.error("Could not copy connect command", error);
       }
     });
   });
