@@ -7,14 +7,12 @@ import socialLogo from "../assets/vftf/logo.png";
 type Props = {
   title: string;
   description?: string;
-  script?: string;
   noindex?: boolean;
 };
 
 const {
   title,
   description = "Search for vanilla Team Fortress 2 servers running the classic Quickplay ruleset.",
-  script,
   noindex = false,
 } = Astro.props;
 
@@ -76,10 +74,6 @@ const structuredData = {
       type="application/ld+json"
       set:html={JSON.stringify(structuredData)}
     />
-
-    {script && (
-      <script src={script}></script>
-    )}
 
   </head>
 

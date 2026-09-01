@@ -1,3 +1,5 @@
+// IMPORTS
+
 import { stdin as input, stdout as output } from "node:process";
 import { existsSync, readFileSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
@@ -5,10 +7,19 @@ import { isIP } from "node:net";
 import { dirname, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
+
 import ts from "typescript";
+
 import { validateServerDirectory } from "../src/data/servers/core/validate";
 import { regions } from "../src/data/servers/regions";
-import type { CommunityDefinition, RegionKey, ServerLinks } from "../src/data/servers/core/types";
+import type {
+  CommunityDefinition,
+  RegionKey,
+  ServerLinks,
+  Server,
+} from "../src/data/servers/core/types";
+
+// TYPES
 
 type CommunityChoice =
   | {
@@ -24,21 +35,18 @@ type CommunityChoice =
       links?: ServerLinks;
     };
 
-type ServerDraft = {
-  name: string;
-  region: RegionKey;
-  ip: string;
-  country: string;
-};
+type ServerDraft = Server;
 
 type CommunitySource = CommunityDefinition & {
   filePath: string;
 };
 
+// CONSTANTS
+
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const communitiesPath = resolve(root, "src/data/servers/communities");
 
-const color = {
+const color = { // why is this a constant? -spark
   title: (value: string) => `\x1b[38;5;214m${value}\x1b[0m`,
   accent: (value: string) => `\x1b[38;5;215m${value}\x1b[0m`,
   muted: (value: string) => `\x1b[2m${value}\x1b[0m`,
@@ -54,6 +62,8 @@ const pipedAnswers = input.isTTY
   : readFileSync(0, "utf8").replace(/\r\n/g, "\n").split("\n");
 const rl = input.isTTY ? createInterface({ input, output }) : undefined;
 
+// FUNCTIONS
+
 function slugify(value: string) {
   return value
     .trim()
@@ -61,6 +71,10 @@ function slugify(value: string) {
     .replace(/['"]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function isValidSlug(slug: string): boolean {
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug);
 }
 
 function formatOptional(value: string) {
@@ -169,7 +183,16 @@ function renderCommunityGrid(communities: readonly CommunitySource[]) {
 }
 
 function renderServer(server: ServerDraft, indent = "    ") {
-  return `${indent}{\n${indent}  name: "${server.name}",\n${indent}  region: "${server.region}",\n${indent}  ip: "${server.ip}",\n${indent}  country: "${server.country}",\n${indent}},`;
+  return [
+    `${indent}{`,
+    `${indent}  name: ${server.name},`,
+    `${indent}  slug: ${server.slug},`,
+    `${indent}  region: ${server.region},`,
+    `${indent}  ip: ${server.ip},`,
+    `${indent}  country: ${server.country},`,
+    `${indent}  is_tf2c: ${server.is_tf2c},`,
+    `${indent}},`
+  ].join('\n');
 }
 
 function renderNewCommunity(
@@ -320,6 +343,8 @@ function renderPreviewSummary(community: CommunityChoice, servers: ServerDraft[]
   });
 }
 
+// HELPERS
+
 async function askRequired(question: string) {
   while (true) {
     const answer = (await ask(question)).trim();
@@ -373,6 +398,8 @@ async function ask(question: string) {
   output.write(`${question}${answer}\n`);
   return answer;
 }
+
+// CLI
 
 async function askCommunityChoice(communities: readonly CommunitySource[]): Promise<CommunityChoice> {
   console.log(`\n${color.title("Community")}`);
@@ -459,7 +486,7 @@ async function askRegion(): Promise<RegionKey> {
   }
 }
 
-async function askServer(usedIps: Set<string>): Promise<ServerDraft> {
+async function askServer(usedIps: Set<string>, usedSlugs: Set<string>): Promise<ServerDraft> {
   const name = await askRequired("\nServer name: ");
   const region = await askRegion();
 
@@ -473,6 +500,8 @@ async function askServer(usedIps: Set<string>): Promise<ServerDraft> {
       continue;
     }
 
+    const slug = await askSlug(usedSlugs);
+
     if (usedIps.has(ip)) {
       console.log(color.error("That server address already exists in the directory."));
       continue;
@@ -484,22 +513,26 @@ async function askServer(usedIps: Set<string>): Promise<ServerDraft> {
       continue;
     }
 
+    const is_tf2c = await askTF2C();
+
     usedIps.add(ip);
 
     return {
       name,
+      slug,
       region,
       ip,
       country,
+      is_tf2c
     };
   }
 }
 
-async function askServers(usedIps: Set<string>) {
+async function askServers(usedIps: Set<string>, usedSlugs: Set<string>) {
   const servers: ServerDraft[] = [];
 
   while (true) {
-    servers.push(await askServer(usedIps));
+    servers.push(await askServer(usedIps, usedSlugs));
 
     if (!(await askYesNo("\nAdd another server? (y/N): "))) {
       return servers;
@@ -507,49 +540,91 @@ async function askServers(usedIps: Set<string>) {
   }
 }
 
+async function askTF2C(): Promise<boolean> {
+  return (await askYesNo("Is this server for TF2 Classified?", false))
+}
+
+async function askSlug(usedSlugs: Set<string>): Promise<string> {
+  while (true) {
+    const slug = (await ask("Server slug: ")).trim().toLowerCase();
+
+    if (!isValidSlug(slug)) {
+      console.log(
+        color.error(
+          "Slugs must only contain lowercase letters, numbers, and single hyphens."
+        )
+      );
+
+      continue;
+    }
+
+    if (usedSlugs.has(slug)) {
+      console.log(color.error("That server slug already exists. Every slug has to be unique!"));
+    }
+
+    usedSlugs.add(slug);
+    return slug;
+  }
+}
+
+// MAIN
+
 async function main() {
-  console.log(color.title("Vanilla Fortress server helper"));
+  try {
+    console.log(color.title("Vanilla Fortress server helper"));
 
-  const communities = await readCommunitySources();
-  await validateCommunitySources(communities);
+    const communities = await readCommunitySources();
+    await validateCommunitySources(communities);
 
-  const community = await askCommunityChoice(communities);
-  const usedIps = new Set(
-    communities.flatMap((community) => community.servers.map((server) => server.ip)),
-  );
-  const servers = await askServers(usedIps);
+    const community = await askCommunityChoice(communities);
+    const usedIps = new Set(
+      communities.flatMap((community) => community.servers.map((server) => server.ip)),
+    );
+    const usedSlugs = new Set(
+      communities.flatMap((community) => community.servers.map((server) => server.slug)),
+    );
+    const servers = await askServers(usedIps, usedSlugs);
 
-  console.log(`\n${color.title("Preview")}`);
-  renderPreviewSummary(community, servers);
-  console.log();
+    console.log(`\n${color.title("Preview")}`);
+    renderPreviewSummary(community, servers);
+    console.log();
 
-  if (community.type === "new") {
-    console.log(`Will create ${color.path(`src/data/servers/communities/${community.slug}.ts`)}`);
-    console.log(`\n${color.title("Generated community file")}`);
-    console.log(color.code(renderNewCommunity(community, servers)));
-  } else {
-    console.log(`Will append ${servers.length === 1 ? "this server" : "these servers"} to ${color.accent(community.name)}:`);
-    console.log(color.code(servers.map((server) => renderServer(server, "  ")).join("\n")));
+    if (community.type === "new") {
+      console.log(`Will create ${color.path(`src/data/servers/communities/${community.slug}.ts`)}`);
+      console.log(`\n${color.title("Generated community file")}`);
+      console.log(color.code(renderNewCommunity(community, servers)));
+    } else {
+      console.log(`Will append ${servers.length === 1 ? "this server" : "these servers"} to ${color.accent(community.name)}:`);
+      console.log(color.code(servers.map((server) => renderServer(server, "  ")).join("\n")));
+    }
+
+    validateProposedChanges(communities, community, servers);
+
+    if (!(await askYesNo("\nWrite these changes? (Y/n): ", true))) {
+      console.log(color.warning("No files were changed."));
+      return;
+    }
+
+    if (community.type === "new") {
+      await createCommunityFile(community, servers);
+    } else {
+      await appendServersToCommunity(community, servers);
+    }
+
+    console.log(color.success("\nServer directory updated."));
+
+    console.log(`\n${color.title("Next steps")}`);
+    console.log(`${color.success("1.")} npm run check`);
+    console.log(`${color.success("2.")} npm run build`);
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ABORT_ERR") {
+      console.log("\n\nAborted with Ctrl+C.");
+    } else if (error instanceof Error) {
+      console.error(color.error("\nSomething went wrong.\n") + error.stack);
+    } else {
+      console.error(color.error("\nSomething went catastrophically wrong.\n") + error);
+    }
   }
-
-  validateProposedChanges(communities, community, servers);
-
-  if (!(await askYesNo("\nWrite these changes? (Y/n): ", true))) {
-    console.log(color.warning("No files were changed."));
-    return;
-  }
-
-  if (community.type === "new") {
-    await createCommunityFile(community, servers);
-  } else {
-    await appendServersToCommunity(community, servers);
-  }
-
-  console.log(color.success("\nServer directory updated."));
-
-  console.log(`\n${color.title("Next steps")}`);
-  console.log(`${color.success("1.")} npm run check`);
-  console.log(`${color.success("2.")} npm run build`);
 }
 
 try {

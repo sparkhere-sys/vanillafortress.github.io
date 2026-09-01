@@ -21,6 +21,7 @@ const queryHost = isIP(serverHost)
   : await lookup(serverHost, { family: 4 }).then(({ address }) => address).catch(() => serverHost);
 const queryAddress = `${queryHost}:${serverPort}`;
 const connectUrl = `steam://connect/${server.ip}`;
+const connectPage = `/connect?server=${server.slug}`;
 const country = server.country?.toLowerCase();
 const flagStyle = country
   ? `background-image: url("https://flagcdn.com/${country}.svg")`
@@ -88,7 +89,14 @@ const searchText = [
             ></span>
           </span>
           <span class="server-connection-meta">
-            <code class="server-address">{server.ip}</code>
+            <button
+              class="server-address",
+              type="button",
+              data-copy={`connect ${server.ip}`}
+              aria-label={`Copy connect command for ${server.name}`}
+            >
+              {server.ip}
+            </button>
             <span class="server-meta-separator" aria-hidden="true">&bull;</span>
             <span class="status-head">
               <span class="status-dot" aria-hidden="true"></span>
@@ -106,11 +114,11 @@ const searchText = [
         <button
           class="copy-ip"
           type="button"
-          data-copy={server.ip}
+          data-copy={connectPage}
           aria-label={`Copy connect command for ${server.name}`}
         >
           <span class="server-action-icon" style={`--icon: url("${copyIcon}")`} aria-hidden="true"></span>
-          <span data-copy-label>Copy IP</span>
+          <span data-copy-label>Copy URL</span>
         </button>
       </div>
     </div>

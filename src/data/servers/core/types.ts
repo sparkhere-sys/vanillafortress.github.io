@@ -13,9 +13,11 @@ export type ServerLinks = {
 
 export type ServerDefinition = {
   name: string;
+  slug: string
   region: RegionKey;
   ip: string;
   country: string;
+  is_tf2c?: boolean;
 };
 
 export type CommunityDefinition = {
@@ -24,7 +26,7 @@ export type CommunityDefinition = {
   servers: ServerDefinition[];
 };
 
-export type Server = ServerDefinition;
+export type Server = ServerDefinition; // why not use the ServerDefinition type straight up? -spark
 
 export type ServerGroup = {
   name: string;

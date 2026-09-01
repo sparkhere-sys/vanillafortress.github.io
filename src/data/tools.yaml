@@ -7,12 +7,12 @@
 
 - name: Server Browser
   description: |
-    A powerful recreation of TF2's old server browser, with plenty of improvements and filters.
+    A powerful recreation of TF2's server browser, with plenty of improvements and filters.
   link: https://theothertored.github.io/tf2-server-browser/
 
 - name: Cosmetic Remover Tool
   description: |
-    This tool lets you pick and choose cosmetics to keep or remove.
+    This tool lets you pick and choose cosmetics to keep or remove. Remove all cosmetics to recreate the No Hats mod!
   link: https://gamebanana.com/tools/20969
 
 - name: Mastercomfig Quickplay
@@ -22,5 +22,5 @@
 
 - name: Community HUD Fixes
   description: |
-    Fixes to the default HUD, made by the community and CriticalFlaw.
+    Fixes to the default HUD, made by the community.
   link: https://github.com/CriticalFlaw/tf2hud-fixes

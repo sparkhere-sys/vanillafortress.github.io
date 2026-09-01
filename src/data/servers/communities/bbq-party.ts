@@ -9,6 +9,7 @@ export default {
   servers: [
     {
       name: "BBQ Party",
+      slug: "bbqp",
       region: "eu",
       ip: "79.76.47.29:27015",
       country: "se",

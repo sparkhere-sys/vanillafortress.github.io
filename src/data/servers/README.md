@@ -30,9 +30,11 @@ You can also edit the TypeScript files manually.
    ```ts
    {
      name: "Example Server",
+     slug: "example-server",
      region: "eu",
      ip: "server.example.com:27015",
      country: "de",
+     is_tf2c: false,
    }
    ```
 
@@ -56,9 +58,11 @@ export default {
   servers: [
     {
       name: "Example Community EU",
+      slug: "example-community",
       region: "eu",
       ip: "server.example.com:27015",
       country: "de",
+      is_tf2c: false,
     },
   ],
 } satisfies CommunityDefinition;
@@ -79,9 +83,11 @@ npm run build
 | Field | Required | Description |
 | --- | --- | --- |
 | `name` | Yes | Display name with no leading or trailing whitespace. |
+| `slug` | Yes | Name used for the `server` parameter in the [connect page.](../../pages/connect.astro) |
 | `region` | Yes | One of `eu`, `na`, `sa`, `asia`, `oce`, `af`, or `me`. |
 | `ip` | Yes | Unique address in `host:port` format. Bracketed IPv6 is supported. |
 | `country` | Yes | Lowercase two-letter country code used for the server flag. |
+| `is_tf2c` | No | Set to `true` if the server is for TF2 Classified. If left empty, it will assume `false`. |
 
 Community names and server addresses must be unique across the directory. Each
 community must contain at least one server. Community links must use HTTP or

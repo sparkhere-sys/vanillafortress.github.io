@@ -1,0 +1,59 @@
+---
+import { serverDefinitions } from "../data/servers";
+import Layout from "../layouts/default.astro";
+
+const servers = serverDefinitions.flatMap((community) => community.servers);
+---
+
+<Layout
+  title="Connect"
+  noindex>
+
+<section class="page-intro">
+  <h1 id="heading">Redirecting</h1>
+  <p class="page-lead" id="message">
+    You're being redirected right now.
+  </p>
+  <p class="page-lead" id="fallback">
+    If the redirect doesn't work, click this button:
+  </p>
+  <div class="links">
+    <a id="connect" href="/">Connect</a>
+  </div>
+</section>
+
+<script define:vars={{ servers }} is:inline>
+  const server_param = new URLSearchParams(window.location.search).get("server");
+  const server = servers.find((server) => server.slug === server_param);
+
+  if (server) {
+    const link = `steam://connect/${server.ip}`;
+
+    document.title = `Connect to ${server.name}`;
+
+    document.querySelector("#message").textContent =
+      `You're being redirected to ${server.name} right now.`;
+
+    document.querySelector("#connect").href = link;
+    document.querySelector("#connect").textContent =
+      `Connect to ${server.name}`;
+
+    window.location.href = link;
+  } else {
+    document.title = "Server not found!";
+
+    document.querySelector("#heading").textContent
+      = "Server not found!";
+
+    document.querySelector("#message").textContent
+      = "The server you're trying to connect to doesn't exist.";
+
+    document.querySelector("#fallback").remove();
+
+    const link = document.querySelector("#connect");
+    link.href = "/";
+    link.textContent = "Return to homepage";
+  }
+</script>
+
+</Layout>

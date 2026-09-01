@@ -1,14 +1,15 @@
 import type { CommunityDefinition } from "../core/types";
 
 export default {
-  name: "Winterworks Casual",
+  name: "Vanilla Fortress",
   servers: [
     {
-      name: "Winterworks (US Central)",
-      slug: "winterworks-casual",
+      name: "Vanilla Fortress TF2C (NYC)",
+      slug: "vftf-tf2c",
       region: "na",
-      ip: "170.23.69.203:22655",
+      ip: "209.222.101.211:5688",
       country: "us",
-    },
+      is_tf2c: true,
+    }
   ],
 } satisfies CommunityDefinition;

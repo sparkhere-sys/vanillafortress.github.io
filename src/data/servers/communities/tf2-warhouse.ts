@@ -9,6 +9,7 @@ export default {
   servers: [
     {
       name: "TF2 Warhouse",
+      slug: "warhouse",
       region: "na",
       ip: "warhouse.gamergod.net:22247",
       country: "us",
