@@ -12,7 +12,7 @@ const servers = serverDefinitions.flatMap((community) => community.servers);
 <section class="page-intro">
   <h1 id="heading">Redirecting</h1>
   <p class="page-lead" id="message">
-    You're being redirected to right now.
+    You're being redirected right now.
   </p>
   <p class="page-lead" id="fallback">
     If the redirect doesn't work, click this button:
@@ -33,21 +33,21 @@ const servers = serverDefinitions.flatMap((community) => community.servers);
 
     document.querySelector("#message").textContent =
       `You're being redirected to ${server.name} right now.`;
-    
+
     document.querySelector("#connect").href = link;
     document.querySelector("#connect").textContent =
       `Connect to ${server.name}`;
-    
+
     window.location.href = link;
   } else {
     document.title = "Server not found!";
 
-    document.querySelector("#heading").textContent 
+    document.querySelector("#heading").textContent
       = "Server not found!";
-    
+
     document.querySelector("#message").textContent
       = "The server you're trying to connect to doesn't exist.";
-    
+
     document.querySelector("#fallback").remove();
 
     const link = document.querySelector("#connect");
