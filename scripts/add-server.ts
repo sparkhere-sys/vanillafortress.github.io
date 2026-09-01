@@ -7,10 +7,17 @@ import { isIP } from "node:net";
 import { dirname, resolve } from "node:path";
 import { createInterface } from "node:readline/promises";
 import { fileURLToPath, pathToFileURL } from "node:url";
+
 import ts from "typescript";
+
 import { validateServerDirectory } from "../src/data/servers/core/validate";
 import { regions } from "../src/data/servers/regions";
-import type { CommunityDefinition, RegionKey, ServerLinks } from "../src/data/servers/core/types";
+import type {
+  CommunityDefinition,
+  RegionKey,
+  ServerLinks,
+  Server,
+} from "../src/data/servers/core/types";
 
 // TYPES
 
@@ -28,13 +35,7 @@ type CommunityChoice =
       links?: ServerLinks;
     };
 
-type ServerDraft = {
-  name: string;
-  region: RegionKey;
-  ip: string;
-  country: string;
-  is_tf2c: boolean;
-};
+type ServerDraft = Server;
 
 type CommunitySource = CommunityDefinition & {
   filePath: string;
@@ -45,7 +46,7 @@ type CommunitySource = CommunityDefinition & {
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const communitiesPath = resolve(root, "src/data/servers/communities");
 
-const color = {
+const color = { // why is this a constant? -spark
   title: (value: string) => `\x1b[38;5;214m${value}\x1b[0m`,
   accent: (value: string) => `\x1b[38;5;215m${value}\x1b[0m`,
   muted: (value: string) => `\x1b[2m${value}\x1b[0m`,
@@ -70,6 +71,10 @@ function slugify(value: string) {
     .replace(/['"]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function isValidSlug(slug: string): boolean {
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug);
 }
 
 function formatOptional(value: string) {
@@ -178,8 +183,16 @@ function renderCommunityGrid(communities: readonly CommunitySource[]) {
 }
 
 function renderServer(server: ServerDraft, indent = "    ") {
-  return `${indent}{\n${indent}  name: "${server.name}",\n${indent}  region: "${server.region}",\n${indent}  ip: "${server.ip}",\n${indent}  country: "${server.country}",\n${indent}  is_tf2c: ${server.is_tf2c},\n${indent}},`;
-  // that line is so fucking long
+  return [
+    `${indent}{`,
+    `${indent}  name: ${server.name},`,
+    `${indent}  slug: ${server.slug},`,
+    `${indent}  region: ${server.region},`,
+    `${indent}  ip: ${server.ip},`,
+    `${indent}  country: ${server.country},`,
+    `${indent}  is_tf2c: ${server.is_tf2c},`,
+    `${indent}},`
+  ].join('\n');
 }
 
 function renderNewCommunity(
@@ -473,7 +486,7 @@ async function askRegion(): Promise<RegionKey> {
   }
 }
 
-async function askServer(usedIps: Set<string>): Promise<ServerDraft> {
+async function askServer(usedIps: Set<string>, usedSlugs: Set<string>): Promise<ServerDraft> {
   const name = await askRequired("\nServer name: ");
   const region = await askRegion();
 
@@ -486,6 +499,8 @@ async function askServer(usedIps: Set<string>): Promise<ServerDraft> {
       console.log(color.error(address.message));
       continue;
     }
+
+    const slug = await askSlug(usedSlugs);
 
     if (usedIps.has(ip)) {
       console.log(color.error("That server address already exists in the directory."));
@@ -504,6 +519,7 @@ async function askServer(usedIps: Set<string>): Promise<ServerDraft> {
 
     return {
       name,
+      slug,
       region,
       ip,
       country,
@@ -512,11 +528,11 @@ async function askServer(usedIps: Set<string>): Promise<ServerDraft> {
   }
 }
 
-async function askServers(usedIps: Set<string>) {
+async function askServers(usedIps: Set<string>, usedSlugs: Set<string>) {
   const servers: ServerDraft[] = [];
 
   while (true) {
-    servers.push(await askServer(usedIps));
+    servers.push(await askServer(usedIps, usedSlugs));
 
     if (!(await askYesNo("\nAdd another server? (y/N): "))) {
       return servers;
@@ -525,11 +541,30 @@ async function askServers(usedIps: Set<string>) {
 }
 
 async function askTF2C(): Promise<boolean> {
-  if (!(await askYesNo("\nIs this server for TF2 Classified? (y/N): ", false))) {
-    return false
-  }
+  return (await askYesNo("Is this server for TF2 Classified?", false))
+}
 
-  return true
+async function askSlug(usedSlugs: Set<string>): Promise<string> {
+  while (true) {
+    const slug = (await ask("Server slug: ")).trim().toLowerCase();
+
+    if (!isValidSlug(slug)) {
+      console.log(
+        color.error(
+          "Slugs must only contain lowercase letters, numbers, and single hyphens."
+        )
+      );
+
+      continue;
+    }
+
+    if (usedSlugs.has(slug)) {
+      console.log(color.error("That server slug already exists. Every slug has to be unique!"));
+    }
+
+    usedSlugs.add(slug);
+    return slug;
+  }
 }
 
 // MAIN
@@ -545,7 +580,10 @@ async function main() {
     const usedIps = new Set(
       communities.flatMap((community) => community.servers.map((server) => server.ip)),
     );
-    const servers = await askServers(usedIps);
+    const usedSlugs = new Set(
+      communities.flatMap((community) => community.servers.map((server) => server.slug)),
+    );
+    const servers = await askServers(usedIps, usedSlugs);
 
     console.log(`\n${color.title("Preview")}`);
     renderPreviewSummary(community, servers);
